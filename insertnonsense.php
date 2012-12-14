@@ -6,7 +6,7 @@ if(!isset($_SESSION['xplo1']))
 {header("url=http://xplorers.host56.com");}
 else
 {require('dbconnect.php');
-$timepass=$_POST['textinpu'];
+$timepass=strip_tags($_POST['textinpu']);
  $submit=$_POST['submit'];
  echo($timepass);
  if($submit)
