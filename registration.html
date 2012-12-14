@@ -1,0 +1,90 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="CoffeeCup HTML Editor (www.coffeecup.com)">
+    <meta name="created" content="Tue, 08 May 2012 17:23:48 GMT">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title></title>
+    
+    <!--[if IE]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+<form method="post" action="registration.html">
+<p>Enter Desired Login Name:<input type="text" name="namealpha"></input>&nbsp &nbsp(maximum 15 characters,min 4 characters,only alphabets and numerics,no space)</p>
+<p>Enter Password:<input type="password" name="passalpha1" />&nbsp &nbsp (minimum 6 characters,maximum 10)</p>
+<p>Retype Password:<input type="password" name="passalpha2" /></p>
+<input type="submit" value="register" name="register"/>
+<?php
+require('dbconnect.php');
+if(isset($_POST['register']))
+{if(!empty($_POST['namealpha']) && !empty($_POST['passalpha1']) && ($_POST['passalpha1']==$_POST['passalpha2']) &&!empty($_POST['passalpha2'])  && ctype_alnum($_POST['namealpha']) && !preg_match("/ /", $_POST['namealpha']) && preg_match("/^[0-9A-Z@!#$%&\/\(\)=\-_?+\*\.,:;]{8,64}$/i", $_POST['passalpha1']))
+{$xpalpha=(trim($_POST['namealpha']));
+$passxp=(trim($_POST['passalpha1']));
+$count1=strlen($xpalpha);
+$count2=strlen($passxp);
+
+if(($count1<=15) && ($count1>=4) && ($count2>=6) && ($count2<=10) )
+{$ncheck=mysql_query("SELECT uname FROM xplomembers WHERE uname='$xpalpha'");
+$ncheck1=mysql_num_rows($ncheck);
+if($ncheck1!=0)
+{die('Sorry, the username already exists');}
+else
+{$hrefval='xplmemb/'.$xpalpha.'/'.$xpalpha.'.html?user='.$xpalpha;
+$qsql="INSERT INTO xplomembers (memid,uname,upass,pagepath,nstable) VALUES (NULL,'$xpalpha',MD5('$passxp'),'$hrefval','$xpalpha')";
+
+mysql_query($qsql);
+
+mkdir("xplmemb/".$xpalpha);
+chmod("xplmemb/".$xpalpha, 0777);
+copy("chintu89.html","xplmemb/$xpalpha/$xpalpha.html");
+#rename('xplmemb/chintu89.html',$xpalpha.'.html');
+copy("displaynonsense.php","xplmemb/$xpalpha/displaynonsense.php");
+copy("judgement.php","xplmemb/$xpalpha/judgement.php");
+copy("dbconnect.php","xplmemb/$xpalpha/dbconnect.php");
+copy("dbcomment.php","xplmemb/$xpalpha/dbcomment.php");
+copy("logout.php","xplmemb/$xpalpha/logout.php");
+copy("resize-class.php","xplmemb/$xpalpha/resize-class.php");
+copy("resize.php","xplmemb/$xpalpha/resize.php");
+copy("uploadpic.php","xplmemb/$xpalpha/uploadpic.php");
+copy("upload1.php","xplmemb/$xpalpha/upload1.php");
+copy("insertnonsense.php","xplmemb/$xpalpha/insertnonsense.php");
+copy("lu.css","xplmemb/$xpalpha/lu.css");
+copy("sp.php","xplmemb/$xpalpha/sp.php");
+copy("spcheck.php","xplmemb/$xpalpha/spcheck.php");
+copy("jwplayer.js","xplmemb/$xpalpha/jwplayer.js");
+copy("player.swf","xplmemb/$xpalpha/player.swf");
+copy("home.php","xplmemb/$xpalpha/home.php");
+copy("blank.jpg","xplmemb/$xpalpha/$xpalpha.jpg");
+copy("onl.jpg","xplmemb/$xpalpha/onl.jpg");
+$sql = "CREATE TABLE `a4313936_xplorer`.`$xpalpha` (`id` INT NOT NULL AUTO_INCREMENT, `xplotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `coname` VARCHAR(15) NOT NULL, `nsense` VARCHAR(1000) NOT NULL, INDEX (`id`)) ENGINE = MyISAM";
+mysql_query($sql);
+$patth="xplmemb/".$xpalpha."/".$xpalpha.".jpg";
+mysql_query("UPDATE xplomembers SET upict='$patth' WHERE uname='$xpalpha'");
+mysql_close($conn);
+echo("Thank you for registering. you will be redirected in 5 secs");
+header("refresh:5,url=http://www.xplorers.host56.com/index.html");
+
+}
+
+}
+else
+echo("error in filling form..");
+
+}
+else
+echo("Error!");
+
+}
+
+
+?>
+
+  </body>
+</html>
