@@ -4,10 +4,24 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="generator" content="CoffeeCup HTML Editor (www.coffeecup.com)">
-    <meta name="created" content="Tue, 08 May 2012 17:23:48 GMT">
+    <meta name="generator" content="">
+    <meta name="created" content="">
     <meta name="description" content="">
     <meta name="keywords" content="">
+   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+$("#form1").validate({
+rules: {
+namealpha: "required",// simple rule, converted to {required:true}
+passalpha1: "required",
+passalpha2: "required",
+},
+
+});
+});
+</script>
     <title></title>
     
     <!--[if IE]>
@@ -15,15 +29,19 @@
     <![endif]-->
   </head>
   <body>
-<form method="post" action="registration.html">
+<form method="post" action="registration.html" id="form1">
 <p>Enter Desired Login Name:<input type="text" name="namealpha"></input>&nbsp &nbsp(maximum 15 characters,min 4 characters,only alphabets and numerics,no space)</p>
 <p>Enter Password:<input type="password" name="passalpha1" />&nbsp &nbsp (minimum 6 characters,maximum 10)</p>
 <p>Retype Password:<input type="password" name="passalpha2" /></p>
 <input type="submit" value="register" name="register"/>
+
 <?php
 require('dbconnect.php');
 if(isset($_POST['register']))
-{if(!empty($_POST['namealpha']) && !empty($_POST['passalpha1']) && ($_POST['passalpha1']==$_POST['passalpha2']) &&!empty($_POST['passalpha2'])  && ctype_alnum($_POST['namealpha']) && !preg_match("/ /", $_POST['namealpha']) && preg_match("/^[0-9A-Z@!#$%&\/\(\)=\-_?+\*\.,:;]{8,64}$/i", $_POST['passalpha1']))
+{if(!empty($_POST['namealpha']) && !empty($_POST['passalpha1']) && ($_POST['passalpha1']==
+$_POST['passalpha2']) &&!empty($_POST['passalpha2'])  && ctype_alnum($_POST['namealpha']) && 
+!preg_match('/ /', $_POST['namealpha']) && 
+preg_match('/^[0-9A-Z@!#$%&\/\(\)=\-_?+\*\.,:;]{8,64}$/i', $_POST['passalpha1']))
 {$xpalpha=(trim($_POST['namealpha']));
 $passxp=(trim($_POST['passalpha1']));
 $count1=strlen($xpalpha);
