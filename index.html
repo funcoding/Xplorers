@@ -1,3 +1,9 @@
+<?php
+session_start();
+$token=md5(uniqid(mt_rand(),TRUE));
+$_SESSION['token']=$token;
+?>
+
 <!DOCTYPE html><html lang="en" id="facebook" class="no_js"> 
 <head><meta charset="utf-8" />
 <script>CavalryLogger=false;window._script_path = "\/index.php";window._EagleEyeSeed="BPCS";</script>
@@ -11,15 +17,17 @@
 		 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <div class="alert alert-info" style="float: right; margin-right: 100px; margin-top: 150px; border-width: 0px; padding-top: 25px; margin-bottom: 20px; padding-bottom: 0px; width: 250px;"> 
-      <form method="POST" action=" " id="login_form" >
+      <form method="POST" action="/login.php" id="login_form" >
 		  <form class="well form-inline">  
-		  <p><strong>Sign in</strong></p>
+		  <p style="font-size:20px;"><strong>Sign in</strong></p>
 		  <hr width=80%>
 <input width="10" type="text" name="usname" placeholder="Username" class="input-small" style="border-bottom-width: 1px; width: 200px;">
   <br>
 <input type="password" name="uspass" placeholder="Password" class="input-small" style="width: 200px;">
   <br>
+
   <button type="submit" class="btn" name="submit">Xplore</button>  
+<input type="hidden" value="<?php echo($token); ?>" name="token"/>
 </form>  	
  <?php
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
@@ -27,10 +35,11 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
 <body onload="javascript:browser()">
 <?php
 } 
+
  if(isset($_POST["submit"]) and !empty($_POST["usname"]) and !empty($_POST["uspass"])) 
 {$xpuser=addslashes(trim($_POST["usname"]));
 $xppass=addslashes(trim(md5($_POST["uspass"])));
-$con=mysql_connect("server","username","password");
+$con=mysql_connect("mysql9.000webhost.com","a4313936_vinay","transcend89");
   if(!$con)
   {die('could not connect:'.mysql_error());}
   else
@@ -41,9 +50,10 @@ mysql_close($con);
 if(($entry['uname']==$xpuser) && ($entry['upass']==$xppass))
 {$path=$entry['pagepath'];
 
-session_start();
+
 $_SESSION['xplo1']=$xpuser;
 echo("http://www.xplorers.host56.com/$path");
+
 header("location:$path");
 }
 else
