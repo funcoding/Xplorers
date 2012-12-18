@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -14,40 +13,42 @@
 $(document).ready(function() {
 $("#form1").validate({
 rules: {
-namealpha: "required",// simple rule, converted to {required:true}
-passalpha1: "required",
-passalpha2: "required",
+namealpha: {required:true,
+rangelength: [4, 15]},
+passalpha1: {required:true,
+rangelength: [6, 10]},
+passalpha2: {equalTo: "#passalpha1"}
 },
 
 });
 });
 </script>
     <title></title>
-    
+    <link href="css/bootstrap.css" rel="stylesheet"> 
     <!--[if IE]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   </head>
   <body>
-<form method="post" action="registration.html" id="form1">
-<p>Enter Desired Login Name:<input type="text" name="namealpha"></input>&nbsp &nbsp(maximum 15 characters,min 4 characters,only alphabets and numerics,no space)</p>
-<p>Enter Password:<input type="password" name="passalpha1" />&nbsp &nbsp (minimum 6 characters,maximum 10)</p>
-<p>Retype Password:<input type="password" name="passalpha2" /></p>
+
+<form method="post" action="registration.html" id="form1" class="well">
+<p>Enter Desired Login Name:<input type="text" name="namealpha" id="namealpha"></input></p>
+<p>Enter Password:<input type="password" name="passalpha1" id="passalpha1" /></p>
+<p>Retype Password:<input type="password" name="passalpha2" id="passalpha2" /></p>
 <input type="submit" value="register" name="register"/>
 
 <?php
 require('dbconnect.php');
 if(isset($_POST['register']))
-{if(!empty($_POST['namealpha']) && !empty($_POST['passalpha1']) && ($_POST['passalpha1']==
-$_POST['passalpha2']) &&!empty($_POST['passalpha2'])  && ctype_alnum($_POST['namealpha']) && 
-!preg_match('/ /', $_POST['namealpha']) && 
-preg_match('/^[0-9A-Z@!#$%&\/\(\)=\-_?+\*\.,:;]{8,64}$/i', $_POST['passalpha1']))
+{if(isset($_POST['namealpha']) && isset($_POST['passalpha1']) && ($_POST['passalpha1']==
+$_POST['passalpha2']) &&isset($_POST['passalpha2'])  && ctype_alnum($_POST['namealpha']) && 
+!preg_match('/ /', $_POST['namealpha']))
 {$xpalpha=(trim($_POST['namealpha']));
 $passxp=(trim($_POST['passalpha1']));
 $count1=strlen($xpalpha);
 $count2=strlen($passxp);
 
-if(($count1<=15) && ($count1>=4) && ($count2>=6) && ($count2<=10) )
+if((4<=$count1 && $count1<=15 && 6<=$count2 && $count2<=10) )
 {$ncheck=mysql_query("SELECT uname FROM xplomembers WHERE uname='$xpalpha'");
 $ncheck1=mysql_num_rows($ncheck);
 if($ncheck1!=0)
