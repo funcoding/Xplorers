@@ -2,11 +2,13 @@
 session_start();
 if(!isset($_SESSION['token'])|| !isset($_POST['token'])){
 	echo "bad request";
+	header("refresh:1;url=http://xplorers.host56.com");
 	exit();
 }
 
 if($_SESSION['token']!=$_POST['token']){
 	echo "bad request";
+	header("refresh:1;url=http://xplorers.host56.com");
 	exit();
 }
 
