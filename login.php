@@ -6,11 +6,7 @@ if(!isset($_SESSION['token'])|| !isset($_POST['token'])){
 	exit();
 }
 
-if($_SESSION['token']!=$_POST['token']){
-	echo "bad request";
-	header("refresh:1;url=http://xplorers.host56.com");
-	exit();
-}
+
 
 if(isset($_POST["submit"]) and !empty($_POST["usname"]) and !empty($_POST["uspass"])) 
 {$xpuser=addslashes(trim($_POST["usname"]));
@@ -96,7 +92,11 @@ $(element).parents('.control-group').removeClass('error');
 </div>
   <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
 <input type="hidden" value="<?php echo($token); ?>" name="token"/>
-</form>  	
+</form>
+<div class="alert alert-error">  
+  
+  <strong>Error!</strong>Wrong username or password. Try again  
+</div>    	
  <?php
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
 {?>
