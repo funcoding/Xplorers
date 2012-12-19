@@ -22,6 +22,18 @@ passalpha2: {equalTo: "#passalpha1"}
 messages:{
 	namealpha:{required:"Login Name is required"},
 	passalpha1:{required:"Password is required"}
+},
+errorClass: "help-inline",
+errorElement: "span",
+highlight:function(element, errorClass, validClass)
+{
+$(element).parents('.control-group').addClass('error');
+
+},
+unhighlight: function(element, errorClass, validClass)
+{
+$(element).parents('.control-group').removeClass('error');
+
 }
 });
 });
@@ -43,16 +55,14 @@ messages:{
 	  <div class="row">
   <div class="span6 offset4">
 <fieldset>
-<form class="well" id="form1" action="registration.html" method="post"  style="width: 660px;">
+<form class="well" id="form1" action="registration.html" method="post"  style="width: 580px;">
 <legend>New User</legend>
 
-<p>Enter Desired Login Name  <input type="text" name="namealpha" id="namealpha"></input></p>
-<p>Enter Password  <input type="password" name="passalpha1" id="passalpha1" /></p>
-<p>Retype Password <input type="password" name="passalpha2" id="passalpha2" /></p>
+<p>Enter Desired Login Name <div class="control-group">	 <input type="text" name="namealpha" id="namealpha"></input></p></div>
+<p>Enter Password  <div class="control-group">	<input type="password" name="passalpha1" id="passalpha1" /></p> </div>
+<p>Retype Password <div class="control-group">	<input type="password" name="passalpha2" id="passalpha2" /></p> </div>
 <input type="submit" value="Register" name="register" class="btn btn-primary "/>
-</fieldset>
-</div>
-</div>
+
 <?php
 require('dbconnect.php');
 if(isset($_POST['register']))
@@ -68,7 +78,14 @@ if((4<=$count1 && $count1<=15 && 6<=$count2 && $count2<=10) )
 {$ncheck=mysql_query("SELECT uname FROM xplomembers WHERE uname='$xpalpha'");
 $ncheck1=mysql_num_rows($ncheck);
 if($ncheck1!=0)
-{die('Sorry, the username already exists');}
+{?>
+<div class="alert alert-error"> 
+<?php
+	die('Sorry, the username already exists');
+	?>
+	</div>
+	<?php 
+	}
 else
 {$hrefval='xplmemb/'.$xpalpha.'/'.$xpalpha.'.html?user='.$xpalpha;
 $qsql="INSERT INTO xplomembers (memid,uname,upass,pagepath,nstable) VALUES (NULL,'$xpalpha',MD5('$passxp'),'$hrefval','$xpalpha')";
@@ -119,6 +136,8 @@ echo("Error!");
 
 
 ?>
-
+</fieldset>
+</div>
+</div>
   </body>
 </html>
