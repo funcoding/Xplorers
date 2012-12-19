@@ -19,7 +19,10 @@ passalpha1: {required:true,
 rangelength: [6, 10]},
 passalpha2: {equalTo: "#passalpha1"}
 },
-
+messages:{
+	namealpha:{required:"Login Name is required"},
+	passalpha1:{required:"Password is required"}
+}
 });
 });
 </script>
@@ -30,6 +33,15 @@ passalpha2: {equalTo: "#passalpha1"}
     <![endif]-->
   </head>
   <body>
+	 <div class="navbar">
+		  <div class="navbar-inner"> 
+		  <div class="container" style="padding-left: 50px; border-left-width: 0px; margin-left: 20px;"> 
+		  <a class="brand" href="http://xplorers.host56.com">Xplorers</a>
+		 </div>
+		 </div>
+		 </div>
+	  <div class="row">
+  <div class="span6 offset4">
 <fieldset>
 <form class="well" id="form1" action="registration.html" method="post"  style="width: 660px;">
 <legend>New User</legend>
@@ -37,8 +49,10 @@ passalpha2: {equalTo: "#passalpha1"}
 <p>Enter Desired Login Name  <input type="text" name="namealpha" id="namealpha"></input></p>
 <p>Enter Password  <input type="password" name="passalpha1" id="passalpha1" /></p>
 <p>Retype Password <input type="password" name="passalpha2" id="passalpha2" /></p>
-<input type="submit" value="register" name="register"/>
+<input type="submit" value="Register" name="register" class="btn btn-primary "/>
 </fieldset>
+</div>
+</div>
 <?php
 require('dbconnect.php');
 if(isset($_POST['register']))
