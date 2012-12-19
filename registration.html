@@ -30,13 +30,15 @@ passalpha2: {equalTo: "#passalpha1"}
     <![endif]-->
   </head>
   <body>
+<fieldset>
+<form class="well" id="form1" action="registration.html" method="post"  style="width: 660px;">
+<legend>New User</legend>
 
-<form method="post" action="registration.html" id="form1" class="well">
-<p>Enter Desired Login Name:<input type="text" name="namealpha" id="namealpha"></input></p>
-<p>Enter Password:<input type="password" name="passalpha1" id="passalpha1" /></p>
-<p>Retype Password:<input type="password" name="passalpha2" id="passalpha2" /></p>
+<p>Enter Desired Login Name  <input type="text" name="namealpha" id="namealpha"></input></p>
+<p>Enter Password  <input type="password" name="passalpha1" id="passalpha1" /></p>
+<p>Retype Password <input type="password" name="passalpha2" id="passalpha2" /></p>
 <input type="submit" value="register" name="register"/>
-
+</fieldset>
 <?php
 require('dbconnect.php');
 if(isset($_POST['register']))
