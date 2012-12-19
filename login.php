@@ -33,59 +33,82 @@ header("location:$path");
 else
 {
 ?>
-<!DOCTYPE html><html lang="en"> 
-<head><meta charset="utf-8" /> 
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
 
 <title>Welcome to Xplorers</title><noscript><meta http-equiv="X-Frame-Options" content="deny" /></noscript> 
      <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    </head>
- 
-    <body>
-		 <script src="http://code.jquery.com/jquery-latest.js"></script>
+     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+     <script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<div class="alert alert-info" style="float: right; margin-right: 100px; margin-top: 150px; border-width: 0px; padding-top: 25px; margin-bottom: 20px; padding-bottom: 0px; width: 250px;"> 
-      <form method="POST" action=" " id="login_form" >
-		  <form class="well form-inline">  
-		  <p><strong>Sign in</strong></p>
-		  <hr width=80%>
-<input width="10" type="text" name="usname" placeholder="Username" class="input-small" style="border-bottom-width: 1px; width: 200px;">
-  <br>
-<input type="password" name="uspass" placeholder="Password" class="input-small" style="width: 200px;">
-  <br>
-  <button type="submit" class="btn" name="submit">Xplore</button>  
-</form> 
-<?php
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
-{?>
-<body onload="javascript:browser()">
-<?php
-} ?>
-<div class="alert alert-error">  
-  
-  <strong>Error!</strong>Wrong username or password. Try again  
-</div>  
-<a href="registration.html" id="reg">New User! Signup</a>
-</div>
-<div class="alert alert-error" >  
-                    <p style="padding-left: 200px; font-size:25px;">XPLORERS</p>
-                    </div>
-        
-                  </div>
-                 
-                    
-                  </div>
-</div></div><div id="pageFooter" data-referrer="page_footer"><div id="contentCurve"></div><div class="clearfix" id="footerContainer"><div class="mrl lfloat" role="contentinfo">
 <script type="text/javascript">
 	function browser()
 	{alert("If u are facing problem using chrome, try again after clearing the cookies and cache in chrome.");
 	}
 	</script> 
+<script type="text/javascript">
+$(document).ready(function() {
+$("#login").validate({
+rules: {
+usname: {required:true},
+uspass: {required:true}
+},
+messages:{
+usname:{required:"Username Required"},
+uspass:{required:"Password Required"}	
+},
+errorClass: "help-inline",
+errorElement: "span",
+highlight:function(element, errorClass, validClass)
+{
+$(element).parents('.control-group').addClass('error');
 
+},
+unhighlight: function(element, errorClass, validClass)
+{
+$(element).parents('.control-group').removeClass('error');
 
+}
+});
+});
+</script>
+    </head>
+ 
+    <body>
+		 
+<div class="alert alert-error" >  
+                    <p style="padding-left: 200px; font-size:25px;">XPLORERS</p>
+                    </div>
+ <div class="span3 offset10" style="margin-top: 50px;">
+<div class="alert alert-info" style="width: 250px;"> 
+     <form id="login" action="/login.php" method="POST" novalidate="novalidate" style="border-top-width: 0px; margin-top: 30px;">
+		  <p style="font-size:20px;"><strong>Sign in</strong></p>
+		  <hr width=80%>
+<div class="control-group">		  
+<label>Username: <input width="10" type="text" name="usname" id="usname" placeholder="Username"/>
 
-
+</div>
+<label>Password:
+<div class="control-group">	
+<input type="password" name="uspass" id="uspass" placeholder="Password"/></label>
+  <br>
+</div>
+  <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
+<input type="hidden" value="<?php echo($token); ?>" name="token"/>
+</form>  	
+ <?php
+if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
+{?>
+<body onload="javascript:browser()">
+<?php
+} 
+?>
+ <a href="registration.html" id="reg">New User! Signup</a>
+</div>
+</div>
 </body>
-</html>	
+</html>
 
 <?php
 }
