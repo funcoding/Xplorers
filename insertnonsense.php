@@ -18,7 +18,7 @@ $timepass=strip_tags($_POST['textinpu']);
 		$cmmname->bind_result($cmmtable);
 			while($cmmname->fetch())
 				{ 
-					$action=$conn->prepare("insert into `$cmmtable` values (?,?)");
+					$action=$conn->prepare("INSERT INTO `$cmmtable` VALUES (?,?)");
 						if(!$action)
 							{echo("error ".$conn->error);}
 					$action->bind_param("ss",$timepass,$name);
