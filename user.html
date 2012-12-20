@@ -1,26 +1,23 @@
 <?php
 session_start();
 require('dbconnect.php');
-if(isset($_SESSION['xplo1']))
-{$stat="online";
-$setlogged=mysql_query("UPDATE `xplomembers` SET `time`=CURTIME(),`tstamp`=now(),  `sess`='".$stat."' WHERE `uname` ='".$_SESSION['xplo1']."'") or
-die(mysql_error());
+if (isset($_SESSION['xplo1']) && isset($_SESSION['token'])) {
+    $stat      = "online";
+    $setlogged = $conn->prepare("UPDATE `xplomembers` SET `time`=CURTIME(),`tstamp`=now(),  `sess`='" . $stat . "' WHERE `uname` ='" . $_SESSION['xplo1'] . "'");
+    $setlogged->execute();
+} else {
+    $conn->close();
 }
-$checkname=$_GET['user'];
-if(!isset($_SESSION['xplo1']))
-{header("url=http://xplorers.host56.com");}
-else{
-$head=$_SESSION['xplo1'];
-$head=strtoupper($head);
-
-require('dbconnect.php');
-$sql = "select * from xplomembers where uname='$checkname'";
-$sql1=mysql_query($sql);
-while($row=mysql_fetch_array($sql1))
-{$y=$row['upict'];
-}
-
-
+$checkname = $_GET['user'];
+if (!isset($_SESSION['xplo1'])) {
+    header("url=http://xplorers.host56.com");
+} else {
+    $head = $_SESSION['xplo1'];
+    $head = strtoupper($head);
+    $sql  = $conn->prepare("select `upict` from xplomembers where `uname`=(?)");
+    $sql->bind_param("s", $checkname);
+    $sql->execute();
+    $sql->bind_result($y);
 ?>
 
 <!DOCTYPE html>
@@ -29,18 +26,21 @@ while($row=mysql_fetch_array($sql1))
 
 <head>
 <title>Xplorers</title>
-<h1 style="color:red;"><?php 
-if($checkname==$_SESSION['xplo1'])
-{echo("WELCOME ".$head);
-require("spcheck.php");}
-else
-{echo($checkname);}
- ?></h1>
+<h1 style="color:red;"><?php
+    if ($checkname == $_SESSION['xplo1']) {
+        echo ("WELCOME " . $head);
+        require("spcheck.php");
+    } else {
+        echo ($checkname);
+    }
+?></h1>
 <link href="lu.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
 function des(a,b)
 {
-var c ="<?php echo($checkname) ?>";
+var c ="<?php
+    echo ($checkname);
+?>";
 
 window.location="/ercom.php?no="+a+"&con="+b+"&user="+c;
 
@@ -58,40 +58,43 @@ font-size: 15px; font-weight: bold;">&nbsp;TimepassBoard</a>
 <a href="logout.php" style="text-decoration: none; color: #900; font-size: 15px; font-weight: bold;">&nbsp;Logout</a> 
 </div>
 <div style="postion:relative;border:1px;">
-<br/><img  style="padding-top:1px;padding-bottom:2px;position:relative;left:0%;" src="http://www.xplorers.host56.com/<?php echo($y) ?>"/> 
+<br/><img  style="padding-top:1px;padding-bottom:2px;position:relative;left:0%;" src="http://www.xplorers.host56.com/<?php
+    echo ($y);
+?>"/> 
 </div>
 <div style="position:relative; padding-top:1px">
-<?php 
-if(($_GET['user'])==($_SESSION['xplo1']))
-{
-echo('<a style="text-decoration: none;" href="uploadpic.php">click here to upload or change pic</a>');
-}
-
+<?php
+    if (($_GET['user']) == ($_SESSION['xplo1'])) {
+        echo ('<a style="text-decoration: none;" href="uploadpic.php">click here to upload or change pic</a>');
+    }
 ?>
 </div>
 <h2 style="width:10%;position:relative;top:1px;left:0%;color: #0066CC;font-size:25px">Friends</h2>
 <div style="width:150px;height: 300px; overflow:auto;">
 <table border="0"><tr><td>
 <?php
-require('dbconnect.php');
-$a=16;
-$dis=mysql_query('SELECT * FROM xplomembers WHERE memid ORDER BY memid ASC');
-while($di=mysql_fetch_array($dis))
-{$nameid=$di['memid'];
-$namedis=$di['uname'];
-$hreflink=$di['pagepath'];
-$time=$di['time'];
-$ses=$di['sess'];
-if(($ses=="online") && (time()<(strtotime($time)+900)))
-{$stats='<img src="onl.jpg"/>';}
-else
-{$stats="";}
-#elseif(time()>(strtotime($time)+900))
+    require('dbconnect.php');
+    $a   = 16;
+    $dis = $conn->prepare("SELECT `memid`,`uname`,`pagepath`,`time`,`sess` FROM xplomembers WHERE `memid` ORDER BY `memid` ASC");
+    $dis->execute();
+    $dis->bind_result($nameid, $namedis, $hreflink, $time, $ses);
+    while ($dis->fetch()) {
+        if (($ses == "online") && (time() < (strtotime($time)) + 900)) {
+            $stats = '<img src="onl.jpg"/>';
+        } else {
+            $stats = "";
+        }
 ?>
-
-<a  style="font-size:17px;" id="mem" href="http://www.xplorers.host56.com/<?php echo($hreflink) ?>">
-<?php echo($namedis." "); echo($stats); echo('</br>');
-}mysql_close($conn);}
+<a  style="font-size:17px;" id="mem" href="http://www.xplorers.host56.com/<?php
+        echo ($hreflink);
+?>">
+<?php
+        echo ($namedis . " ");
+        echo ($stats);
+        echo ('</br>');
+    }
+    $conn->close();
+}
 ?>
 </a></td></tr></table>
 </div>
@@ -103,7 +106,9 @@ else
 <form method="post" action="insertnonsense.php">
 <textarea rows ="8" cols="40" name="textinpu"></textarea>
 <input type="submit" name="submit" value="post"/> 
-<input type="hidden" value="<?php echo($checkname)?>" name="id"/>  
+<input type="hidden" value="<?php
+echo ($checkname);
+?>" name="id"/>  
 </form>
 </div>
 
@@ -115,4 +120,3 @@ require('displaynonsense.php');
 </table>
 </body>
 </html>
-
