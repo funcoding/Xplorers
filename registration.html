@@ -65,76 +65,65 @@ $(element).parents('.control-group').removeClass('error');
 
 <?php
 require('dbconnect.php');
-if(isset($_POST['register']))
-{if(isset($_POST['namealpha']) && isset($_POST['passalpha1']) && ($_POST['passalpha1']==
-$_POST['passalpha2']) &&isset($_POST['passalpha2'])  && ctype_alnum($_POST['namealpha']) && 
-!preg_match('/ /', $_POST['namealpha']))
-{$xpalpha=(trim($_POST['namealpha']));
-$passxp=(trim($_POST['passalpha1']));
-$count1=strlen($xpalpha);
-$count2=strlen($passxp);
-
-if((4<=$count1 && $count1<=15 && 6<=$count2 && $count2<=10) )
-{$ncheck=mysql_query("SELECT uname FROM xplomembers WHERE uname='$xpalpha'");
-$ncheck1=mysql_num_rows($ncheck);
-if($ncheck1!=0)
-{?>
+if (isset($_POST['register'])) {
+    if (isset($_POST['namealpha']) && isset($_POST['passalpha1']) && ($_POST['passalpha1'] == $_POST['passalpha2']) && isset($_POST['passalpha2']) && ctype_alnum($_POST['namealpha']) && !preg_match('/ /', $_POST['namealpha'])) {
+        $xpalpha = (trim($_POST['namealpha']));
+        $passxp  = (trim($_POST['passalpha1']));
+        $count1  = strlen($xpalpha);
+        $count2  = strlen($passxp);
+        if ((4 <= $count1 && $count1 <= 15 && 6 <= $count2 && $count2 <= 10)) {
+            $ncheck = $conn->prepare("SELECT uname FROM xplomembers WHERE uname=(?)");
+            $ncheck->bind_param("s", $xpalpha);
+            $ncheck->execute();
+            $ncheck->bind_result($ncheck1);
+            if ($ncheck->fetch() != 0) {
+?>
 <div class="alert alert-error"> 
 <?php
-	die('Sorry, the username already exists');
-	?>
+                die('Sorry, the username already exists');
+?>
 	</div>
-	<?php 
-	}
-else
-{$hrefval='xplmemb/'.$xpalpha.'/'.$xpalpha.'.html?user='.$xpalpha;
-$qsql="INSERT INTO xplomembers (memid,uname,upass,pagepath,nstable) VALUES (NULL,'$xpalpha',MD5('$passxp'),'$hrefval','$xpalpha')";
-
-mysql_query($qsql);
-
-mkdir("xplmemb/".$xpalpha);
-chmod("xplmemb/".$xpalpha, 0777);
-copy("user.html","xplmemb/$xpalpha/$xpalpha.html");
-#rename('xplmemb/chintu89.html',$xpalpha.'.html');
-copy("displaynonsense.php","xplmemb/$xpalpha/displaynonsense.php");
-copy("judgement.php","xplmemb/$xpalpha/judgement.php");
-copy("dbconnect.php","xplmemb/$xpalpha/dbconnect.php");
-copy("dbcomment.php","xplmemb/$xpalpha/dbcomment.php");
-copy("logout.php","xplmemb/$xpalpha/logout.php");
-copy("resize-class.php","xplmemb/$xpalpha/resize-class.php");
-copy("resize.php","xplmemb/$xpalpha/resize.php");
-copy("uploadpic.php","xplmemb/$xpalpha/uploadpic.php");
-copy("upload1.php","xplmemb/$xpalpha/upload1.php");
-copy("insertnonsense.php","xplmemb/$xpalpha/insertnonsense.php");
-copy("lu.css","xplmemb/$xpalpha/lu.css");
-copy("sp.php","xplmemb/$xpalpha/sp.php");
-copy("spcheck.php","xplmemb/$xpalpha/spcheck.php");
-copy("jwplayer.js","xplmemb/$xpalpha/jwplayer.js");
-copy("player.swf","xplmemb/$xpalpha/player.swf");
-copy("home.php","xplmemb/$xpalpha/home.php");
-copy("blank.jpg","xplmemb/$xpalpha/$xpalpha.jpg");
-copy("onl.jpg","xplmemb/$xpalpha/onl.jpg");
-$sql = "CREATE TABLE `a4313936_xplorer`.`$xpalpha` (`id` INT NOT NULL AUTO_INCREMENT, `xplotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `coname` VARCHAR(15) NOT NULL, `nsense` VARCHAR(1000) NOT NULL, INDEX (`id`)) ENGINE = MyISAM";
-mysql_query($sql);
-$patth="xplmemb/".$xpalpha."/".$xpalpha.".jpg";
-mysql_query("UPDATE xplomembers SET upict='$patth' WHERE uname='$xpalpha'");
-mysql_close($conn);
-echo("Thank you for registering. you will be redirected in 5 secs");
-header("refresh:5,url=http://www.xplorers.host56.com/index.html");
-
+	<?php
+            } else {
+                $hrefval = 'xplmemb/' . $xpalpha . '/' . $xpalpha . '.html?user=' . $xpalpha;
+                $qsql    = $conn->prepare("INSERT INTO xplomembers (memid,uname,upass,pagepath,nstable) VALUES (NULL,(?),MD5(?),(?),(?))");
+                $qsql->bind_param("ssss", $xpalpha, $passxp, $hrefval, $xpalpha);
+                $qsql->execute();
+                mkdir("xplmemb/" . $xpalpha);
+                chmod("xplmemb/" . $xpalpha, 0777);
+                copy("user.html", "xplmemb/$xpalpha/$xpalpha.html");
+                copy("displaynonsense.php", "xplmemb/$xpalpha/displaynonsense.php");
+                copy("judgement.php", "xplmemb/$xpalpha/judgement.php");
+                copy("dbconnect.php", "xplmemb/$xpalpha/dbconnect.php");
+                copy("dbcomment.php", "xplmemb/$xpalpha/dbcomment.php");
+                copy("logout.php", "xplmemb/$xpalpha/logout.php");
+                copy("resize-class.php", "xplmemb/$xpalpha/resize-class.php");
+                copy("resize.php", "xplmemb/$xpalpha/resize.php");
+                copy("uploadpic.php", "xplmemb/$xpalpha/uploadpic.php");
+                copy("upload1.php", "xplmemb/$xpalpha/upload1.php");
+                copy("insertnonsense.php", "xplmemb/$xpalpha/insertnonsense.php");
+                copy("lu.css", "xplmemb/$xpalpha/lu.css");
+                copy("sp.php", "xplmemb/$xpalpha/sp.php");
+                copy("spcheck.php", "xplmemb/$xpalpha/spcheck.php");
+                copy("jwplayer.js", "xplmemb/$xpalpha/jwplayer.js");
+                copy("player.swf", "xplmemb/$xpalpha/player.swf");
+                copy("home.php", "xplmemb/$xpalpha/home.php");
+                copy("blank.jpg", "xplmemb/$xpalpha/$xpalpha.jpg");
+                copy("onl.jpg", "xplmemb/$xpalpha/onl.jpg");
+                $conn->query("CREATE TABLE `a4313936_xplorer`.`$xpalpha` (`id` INT NOT NULL AUTO_INCREMENT, `xplotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `coname` VARCHAR(15) NOT NULL, `nsense` VARCHAR(1000) NOT NULL, INDEX (`id`)) ENGINE = MyISAM");
+                $patth  = "xplmemb/" . $xpalpha . "/" . $xpalpha . ".jpg";
+                $update = $conn->prepare("UPDATE xplomembers SET upict=(?) WHERE uname=(?)");
+                $update->bind_param("ss", $patth, $xpalpha);
+                $update->execute();
+                $conn->close();
+                echo ("Thank you for registering. you will be redirected in 5 secs");
+                header("refresh:5,url=http://www.xplorers.host56.com/index.html");
+            }
+        } else
+            echo ("error in filling form..");
+    } else
+        echo ("Error!");
 }
-
-}
-else
-echo("error in filling form..");
-
-}
-else
-echo("Error!");
-
-}
-
-
 ?>
 </fieldset>
 </div>
