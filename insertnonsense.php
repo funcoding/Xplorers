@@ -1,26 +1,38 @@
 <?php
 session_start();
 $checkname=$_POST['id'];
-$namme=$_SESSION['xplo1'];
+$name=$_SESSION['xplo1'];
 if(!isset($_SESSION['xplo1']))
 {header("url=http://xplorers.host56.com");}
 else
 {require('dbconnect.php');
 $timepass=strip_tags($_POST['textinpu']);
  $submit=$_POST['submit'];
- echo($timepass);
- if($submit)
+ if(isset($submit))
  {
-    if($timepass)
-    { $cmmname=mysql_fetch_assoc(mysql_query("SELECT nstable FROM xplomembers WHERE uname='$checkname'"));
-	mysql_query("INSERT INTO `{$cmmname['nstable']}` (nsense,coname) VALUES ('$timepass','$namme')");
+    if(isset($timepass))
+    {
+		$cmmname=$conn->prepare("SELECT `nstable` FROM xplomembers WHERE uname=(?)");
+		$cmmname->bind_param("s",$checkname);
+		$cmmname->execute();
+		$cmmname->bind_result($cmmtable);
+			while($cmmname->fetch())
+				{ 
+					$action=$conn->prepare("insert into `xplorercomments` values (?,?)");
+						if(!$action)
+							{echo("error ".$conn->error);}
+					$action->bind_param("ss",$timepass,$name);
+					$action->execute();
+				}
+		
 	}
     else
     {
         echo("Enter something in Comment Box");
     }
  }
- mysql_close($conn);
+
+
  header("Location: {$_SERVER['HTTP_REFERER']}");
-	}
-	?>
+}
+?>
