@@ -91,8 +91,8 @@ if (isset($_POST['register'])) {
                 $qsql->execute();
                 mkdir("xplmemb/" . $xpalpha);
                 chmod("xplmemb/" . $xpalpha, 0777);
-                copy("user.html", "xplmemb/$xpalpha/$xpalpha.html");
-                copy("displaynonsense.php", "xplmemb/$xpalpha/displaynonsense.php");
+                copy("user.php", "xplmemb/$xpalpha/$xpalpha.html");
+                copy("displaycomments.php", "xplmemb/$xpalpha/displaycomments.php");
                 copy("judgement.php", "xplmemb/$xpalpha/judgement.php");
                 copy("dbconnect.php", "xplmemb/$xpalpha/dbconnect.php");
                 copy("dbcomment.php", "xplmemb/$xpalpha/dbcomment.php");
@@ -101,7 +101,7 @@ if (isset($_POST['register'])) {
                 copy("resize.php", "xplmemb/$xpalpha/resize.php");
                 copy("uploadpic.php", "xplmemb/$xpalpha/uploadpic.php");
                 copy("upload1.php", "xplmemb/$xpalpha/upload1.php");
-                copy("insertnonsense.php", "xplmemb/$xpalpha/insertnonsense.php");
+                copy("insertcomments.php", "xplmemb/$xpalpha/insertcomments.php");
                 copy("lu.css", "xplmemb/$xpalpha/lu.css");
                 copy("sp.php", "xplmemb/$xpalpha/sp.php");
                 copy("spcheck.php", "xplmemb/$xpalpha/spcheck.php");
