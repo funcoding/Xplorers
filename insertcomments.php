@@ -15,16 +15,19 @@ $timepass=strip_tags($_POST['textinpu']);
 		$cmmname=$conn->prepare("SELECT `nstable` FROM xplomembers WHERE uname=(?)");
 		$cmmname->bind_param("s",$checkname);
 		$cmmname->execute();
+		$cmmname->store_result();
 		$cmmname->bind_result($cmmtable);
 			while($cmmname->fetch())
 				{ 
-					$action=$conn->prepare("INSERT INTO `$cmmtable` VALUES (?,?)");
+					$action=$conn->prepare("INSERT INTO `$cmmtable` (`nsense`,`coname`) VALUES (?,?)");
 						if(!$action)
 							{echo("error ".$conn->error);}
 					$action->bind_param("ss",$timepass,$name);
+					$action->store_result();
 					$action->execute();
 				}
-		
+		$cmmname->free_result();
+		$action->free_result();
 	}
     else
     {
