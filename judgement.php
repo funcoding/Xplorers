@@ -3,49 +3,61 @@ if ($_POST['thuuku']) {
     session_start();
     $submit = $_POST['thuuku'];
     $nid    = $_POST['valueup'];
-    $ss     = $_POST['id'];
-    echo ($ss);
+    $name   = $_POST['id'];
     require('dbconnect.php');
-    $who1 = mysql_query("SELECT * FROM xplomembers WHERE uname='$ss'");
-    while ($som = mysql_fetch_array($who1)) {
-        $tab = $som['nstable'];
+    $who1 = $conn->prepare("SELECT `nstable` FROM xplomembers WHERE uname=`(?)`");
+    $who1->bind_param("s", $name);
+    $who1->execute();
+    $who1->store_result();
+    $who1->bind_result($som);
+    while ($who1->fetch()) {
+        $query1 = $conn->prepare("DELETE FROM `$som` WHERE id=`(?)`");
+        $query1->bind_param("i", $nid);
+        $query1->execute();
+        $conn->close();
+        require("dbcomment.php");
+        $comment_table = $nid . $som;
+        $query2        = $comm->prepare("DROP TABLE `(?)` ");
+        $query2->bind_param("s", $comment_table);
+        $query2->execute();
+        $comm->close();
+        header("Location: {$_SERVER['HTTP_REFERER']}");
     }
-    mysql_query("DELETE FROM `{$tab}` WHERE id='$nid'");
-    mysql_close($conn);
-    require("dbcomment.php");
-    $jo = $nid . $tab;
-    mysql_query("DROP TABLE `$jo` ");
-    mysql_close($conn1);
-    echo ($ss);
-    header("Location: {$_SERVER['HTTP_REFERER']}");
 } elseif ($_POST['submit']) {
     session_start();
     $submit     = $_POST['submit'];
-    $nonsenseid = $_POST['valueup'];
-    $nosense    = $_POST['commentss'];
-    $checkname  = $_POST['tna'];
-    $nnamme     = $_SESSION['xplo1'];
+    $comment_id = $_POST['valueup'];
+    $name2      = $_POST['tna'];
+    $merg       = $comment_id . $name2;
+    $member     = $_SESSION['xplo1'];
+    $comments   = $_POST['commentss'];
     if (!isset($_SESSION['xplo1'])) {
         header("url=http://xplorers.host56.com");
     } else {
-        if ($submit) {
-            if ($nosense) {
+        if (isset($submit)) {
+            if (isset($comments)) {
                 require('dbcomment.php');
-                $concate2 = $nonsenseid . $checkname;
-                if (mysql_num_rows(mysql_query("SHOW TABLES LIKE '" . $concate2 . "'"))) {
-                    mysql_query("INSERT INTO `{$concate2}` (whoo,whatt) VALUES ('$nnamme','$nosense')");
+                $insert_comments1 = $comm->prepare("INSERT INTO `(?)` (`whoo`,`whatt`) VALUES (?,?)");
+                if ($insert_comments1) {
+                    echo ($merg . '<br>' . $member . '<br>' . $comments);
+                    $insert_comments1->bind_param("sss", $merg, $member, $comments);
+                    $insert_comments1->execute();
+                    $insert_comments1->free_result();
                 } else {
-                    $sql = "CREATE TABLE `{$concate2}` (`id` INT(3) NOT NULL AUTO_INCREMENT, 
-							`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-							`whoo` VARCHAR(50) NOT NULL, `whatt` VARCHAR(500) NOT NULL, 
-							PRIMARY KEY (`id`))";
-                    mysql_query($sql, $conn1);
-                    mysql_query("INSERT INTO `{$concate2}` (whoo,whatt) VALUES ('$nnamme','$nosense')");
+                    echo ("here");
+                    $create_table = $comm->prepare("CREATE TABLE `(?)` (`id` INT(3) NOT NULL AUTO_INCREMENT,
+`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`whoo` VARCHAR(50) NOT NULL, `whatt` VARCHAR(500) NOT NULL,
+PRIMARY KEY (`id`))");
+                    if (!$create_table) {
+                        echo ($comm->error);
+                    }
+                    $create_table->bind_param("s", $merg);
+                    $create_table->execute();
                 }
-                mysql_close($conn1);
+                $comm->close();
             }
         }
-        header("Location: {$_SERVER['HTTP_REFERER']}");
     }
 }
 ?>
