@@ -36,7 +36,7 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 </strong>' . ':' . ' ' . htmlentities($non, ENT_QUOTES) . '<input style="float:right;" type="submit"  name="thuuku" value="Thuuki podu"/>' . '</td>' . '</tr>' . '</table>');
         } else {
             echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1  width=100%>' . '<tr>' . '<td>' . $dtime . '<strong>' . $userna . '
-</strong>' . ':' . ' ' . htmlentities($non) . '</td>' . '</tr>' . '</table>');
+</strong>' . ':' . ' ' . htmlentities($non,ENT_QUOTES) . '</td>' . '</tr>' . '</table>');
         }
         $concate = $idtable . $usertable;
         require('dbcomment.php');
