@@ -29,10 +29,10 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 <?php
         if ($userna == $whos) {
             echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1 width=100% >' . '<tr>' . '<td>' . $dtime . '<strong>' . htmlspecialchars($userna) . '
-</strong>' . ':' . ' ' . $non . '<input style="float:right;" type="submit" src="deleteicon.gif" name="thuuku" value="Thuuki podu"/>' . '</td>' . '</tr>' . '</table>');
+</strong>' . ':' . ' ' . htmlentities($non,ENT_QUOTES). '<input style="float:right;" type="submit" src="deleteicon.gif" name="thuuku" value="Thuuki podu"/>' . '</td>' . '</tr>' . '</table>');
         } else {
             echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1  width=100%>' . '<tr>' . '<td>' . $dtime . '<strong>' . htmlspecialchars($userna) . '
-</strong>' . ':' . ' ' . $non . '</td>' . '</tr>' . '</table>');
+</strong>' . ':' . ' ' . htmlentities($non,ENT_QUOTES). '</td>' . '</tr>' . '</table>');
         }
         $concate = $idtable . $tablename;
         require('dbcomment.php');
