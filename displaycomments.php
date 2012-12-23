@@ -8,9 +8,13 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 } else {
     $user  = $_GET['user'];
     $table = $conn->prepare("SELECT `nstable` FROM xplomembers WHERE uname=(?)");
+    $table->bind_param("s", $user);
     $table->execute();
+    $table->store_result();
     $table->bind_result($usertable);
-    $disptable = $conn->prepare("SELECT `nsense`,`xplotime`,`coname`,`id` FROM `{$usertable}` ORDER BY id DESC");
+    while ($table->fetch()) {
+    }
+    $disptable = $conn->prepare("SELECT `nsense`,`xplotime`,`coname`,`id` FROM `$usertable` ORDER BY id DESC");
     $disptable->execute();
     $disptable->bind_result($non, $time, $userna, $idtable);
     while ($disptable->fetch()) {
@@ -28,16 +32,16 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 <div id="co">
 <?php
         if ($userna == $whos) {
-            echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1 width=100% >' . '<tr>' . '<td>' . $dtime . '<strong>' . htmlspecialchars($userna) . '
-</strong>' . ':' . ' ' . htmlentities($non,ENT_QUOTES). '<input style="float:right;" type="submit" src="deleteicon.gif" name="thuuku" value="Thuuki podu"/>' . '</td>' . '</tr>' . '</table>');
+            echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1 width=100% >' . '<tr>' . '<td>' . $dtime . '<strong>' . $userna . '
+</strong>' . ':' . ' ' . htmlentities($non, ENT_QUOTES) . '<input style="float:right;" type="submit"  name="thuuku" value="Thuuki podu"/>' . '</td>' . '</tr>' . '</table>');
         } else {
-            echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1  width=100%>' . '<tr>' . '<td>' . $dtime . '<strong>' . htmlspecialchars($userna) . '
-</strong>' . ':' . ' ' . htmlentities($non,ENT_QUOTES). '</td>' . '</tr>' . '</table>');
+            echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1  width=100%>' . '<tr>' . '<td>' . $dtime . '<strong>' . $userna . '
+</strong>' . ':' . ' ' . htmlentities($non) . '</td>' . '</tr>' . '</table>');
         }
-        $concate = $idtable . $tablename;
+        $concate = $idtable . $usertable;
         require('dbcomment.php');
-        if ($comm->query(mysql_query("SHOW TABLES LIKE '" . $concate . "'"))) {
-            $querry2 = $comm->prepare("SELECT `whoo`,`whatt`,`time`,`id` FROM `{$concate}` ORDER BY id ASC");
+        if ($comm->query("SELECT `whoo`,`whatt`,`time`,`id` FROM `$concate` ORDER BY `id` ASC")) {
+            $querry2 = $comm->prepare("SELECT `whoo`,`whatt`,`time`,`id` FROM `$concate` ORDER BY `id` ASC");
             $querry2->execute();
             $querry2->bind_result($nam, $disp, $tim, $idea);
             while ($querry2->fetch()) {
@@ -52,7 +56,6 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 ?>
  </div>
  <?php
-            $comm->close();
         }
 ?>
 </div> 
@@ -61,12 +64,11 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 ?>" name="valueup" />
 <textarea rows="2" cols="15" name="commentss"></textarea>
 <input  type="submit" value="thaaku" name="submit"/>
-<input type="hidden" value="<?php
-        echo ($user);
-?>" name="id"/>
+<input type="hidden" value=<?php
+        echo (strip_tags($user));
+?> name="id"/>
 </form>
 <?php
     }
-    $conn->close();
 }
 ?>
