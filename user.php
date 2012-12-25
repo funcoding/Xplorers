@@ -107,7 +107,7 @@ window.location="/ercom.php?no="+a+"&id="+b+"&user="+c;
 <tr>
 <td>
 
-<form class="well" method="post" action="insertnonsense.php" style="width: 350px;">
+<form class="well" method="post" action="insertcomments.php" style="width: 350px;">
 <label><textarea class="span3" name="textinpu" placeholder="Type something"></textarea></label>
 <input type="submit" class="btn btn-primary "  name="submit" value="post"/> 
 <input type="hidden" value="<?php
@@ -116,7 +116,7 @@ echo ($checkname);
 </form>
 
 <?php
-require('displaynonsense.php');
+require('displaycomments.php');
 ?>
 </td>
 </tr>
