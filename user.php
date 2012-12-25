@@ -41,7 +41,7 @@ var c ="<?php
     echo ($checkname);
 ?>";
 
-window.location="/ercom.php?no="+a+"&id="+b+"&user="+c;
+window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 
  }
 </script>
