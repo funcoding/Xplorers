@@ -55,8 +55,8 @@ window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 		 <div class="nav-collapse"> 
 		 <ul class="nav"> 
 		 <li class="active">
-		<li><a href="#">Home</a></li>
-		<li><a href="#">Logout</a></li>
+		<li><a href="home.php">Home</a></li>
+		<li><a href="logout.php">Logout</a></li>
 		<li><a href="http://www.xplorers.host56.com/xplmemb/xplorercomments/xplorercomments.html?user=xplorercomments">TimepassBoard</a></li>
 		</div> 
 	</div>
