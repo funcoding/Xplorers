@@ -8,20 +8,20 @@ if(!isset($_SESSION['xplo1']))
 else
 {require('dbconnect.php');
  $submit=$_POST['submit'];
- if(isset($submit))
+ if(isset($submit)) 
  {
     if(isset($text))
     {
-		$cmmname=$conn->prepare("SELECT `nstable` FROM `xplomembers` WHERE `uname`=(?)");
+		$cmmname=$conn->prepare("SELECT `nstable` FROM `xplomembers` WHERE `uname`=?");
 		$cmmname->bind_param("s",$checkname);
 		$cmmname->execute();
 		$cmmname->store_result();
 		$cmmname->bind_result($cmmtable);
-		
+	    $time=strtotime(now);
 		
 			while($cmmname->fetch())
 				{
-						$action=$conn->prepare("INSERT INTO `$cmmtable`(`nsense`,`coname`) VALUES (?,?)");
+						$action=$conn->prepare("INSERT INTO `$cmmtable`(`nsense`,`coname`,`posttime`) VALUES (?,?,$time)");
 						if(!$actions)
 							{echo($conn->error);}
 					$action->bind_param("ss",$text,$name);
