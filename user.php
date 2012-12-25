@@ -14,7 +14,7 @@ if (!isset($_SESSION['xplo1'])) {
 } else {
     $head = $_SESSION['xplo1'];
     $head = strtoupper($head);
-    $sql  = $conn->prepare("select `upict` from xplomembers where `uname`=(?)");
+    $sql  = $conn->prepare("select `upict` from xplomembers where `uname`=?");
     $sql->bind_param("s", $checkname);
     $sql->execute();
     $sql->bind_result($y);
@@ -32,8 +32,7 @@ if (!isset($_SESSION['xplo1'])) {
 <h1 ><?php
     if ($checkname == $_SESSION['xplo1']) {
         require("spcheck.php");
-    } 
-    
+    }
 ?></h1>
 <script type="text/javascript">
 function des(a,b)
@@ -42,7 +41,7 @@ var c ="<?php
     echo ($checkname);
 ?>";
 
-window.location="/ercom.php?no="+a+"&con="+b+"&user="+c;
+window.location="/ercom.php?no="+a+"&id="+b+"&user="+c;
 
  }
 </script>
@@ -85,11 +84,6 @@ window.location="/ercom.php?no="+a+"&con="+b+"&user="+c;
     $dis->execute();
     $dis->bind_result($nameid, $namedis, $hreflink, $time, $ses);
     while ($dis->fetch()) {
-        /*if (($ses == "online") && (time() < (strtotime($time)) + 900)) {
-            $stats = '<img src="onl.jpg"/>';
-        } else {
-            $stats = "";
-        }*/
 ?>
 
 <li>
@@ -98,10 +92,10 @@ window.location="/ercom.php?no="+a+"&con="+b+"&user="+c;
 ?>">
 <?php
         echo ($namedis . " ");
-        ?>
+?>
         </a>
         </li>
-        <?php 
+        <?php
     }
     $conn->close();
 }
@@ -113,7 +107,7 @@ window.location="/ercom.php?no="+a+"&con="+b+"&user="+c;
 <tr>
 <td>
 
-<form class="well" method="post" action="insertcomments.php" style="width: 350px;">
+<form class="well" method="post" action="insertnonsense.php" style="width: 350px;">
 <label><textarea class="span3" name="textinpu" placeholder="Type something"></textarea></label>
 <input type="submit" class="btn btn-primary "  name="submit" value="post"/> 
 <input type="hidden" value="<?php
@@ -122,7 +116,7 @@ echo ($checkname);
 </form>
 
 <?php
-require('displaycomments.php');
+require('displaynonsense.php');
 ?>
 </td>
 </tr>
