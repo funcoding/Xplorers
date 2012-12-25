@@ -2,62 +2,78 @@
 if ($_POST['thuuku']) {
     session_start();
     $submit = $_POST['thuuku'];
-    $nid    = $_POST['valueup'];
-    $name   = $_POST['id'];
-    require('dbconnect.php');
-    $who1 = $conn->prepare("SELECT `nstable` FROM xplomembers WHERE uname=`(?)`");
-    $who1->bind_param("s", $name);
+    $comment_id    = $_POST['valueup'];
+    $person   = $_POST['id'];
+    require("dbconnect.php");
+    require("dbcomment.php");
+    $who1 = $conn->prepare("SELECT nstable FROM xplomembers WHERE uname=?");
+    
+    $who1->bind_param("s", $person);
     $who1->execute();
     $who1->store_result();
-    $who1->bind_result($som);
+    $who1->bind_result($todel);
     while ($who1->fetch()) {
-        $query1 = $conn->prepare("DELETE FROM `$som` WHERE id=`(?)`");
-        $query1->bind_param("i", $nid);
+		$del_sub_comments=$conn->prepare("SELECT `posttime` FROM $todel WHERE id=?");
+		$del_sub_comments->bind_param("i",$comment_id);
+		$del_sub_comments->execute();
+		$del_sub_comments->bind_result($post_time_1);
+		$del_sub_comments->store_result();
+		while($del_sub_comments->fetch())
+		{$conn->query("DELETE FROM `userreplies` WHERE `posttime`=$post_time_1");}
+		$del_sub_comments->free_result();
+        $query1 = $conn->prepare("DELETE FROM $todel WHERE id=?");
+        $query1->bind_param("i", $comment_id);
         $query1->execute();
         $conn->close();
-        require("dbcomment.php");
-        $comment_table = $nid . $som;
-        $query2        = $comm->prepare("DROP TABLE `(?)` ");
-        $query2->bind_param("s", $comment_table);
-        $query2->execute();
-        $comm->close();
-        header("Location: {$_SERVER['HTTP_REFERER']}");
+        
+       header("Location: {$_SERVER['HTTP_REFERER']}");
     }
 } elseif ($_POST['submit']) {
     session_start();
+    
     $submit     = $_POST['submit'];
-    $comment_id = $_POST['valueup'];
-    $name2      = $_POST['tna'];
-    $merg       = $comment_id . $name2;
     $member     = $_SESSION['xplo1'];
     $comments   = $_POST['commentss'];
+    $member_page=$_POST['id'];
+    $x="badboy";
     if (!isset($_SESSION['xplo1'])) {
         header("url=http://xplorers.host56.com");
-    } else {
+    } else { 
         if (isset($submit)) {
             if (isset($comments)) {
-                require('dbcomment.php');
-                $insert_comments1 = $comm->prepare("INSERT INTO `(?)` (`whoo`,`whatt`) VALUES (?,?)");
-                if ($insert_comments1) {
-                    echo ($merg . '<br>' . $member . '<br>' . $comments);
-                    $insert_comments1->bind_param("sss", $merg, $member, $comments);
-                    $insert_comments1->execute();
-                    $insert_comments1->free_result();
-                } else {
-                    echo ("here");
-                    $create_table = $comm->prepare("CREATE TABLE `(?)` (`id` INT(3) NOT NULL AUTO_INCREMENT,
-`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-`whoo` VARCHAR(50) NOT NULL, `whatt` VARCHAR(500) NOT NULL,
-PRIMARY KEY (`id`))");
-                    if (!$create_table) {
-                        echo ($comm->error);
-                    }
-                    $create_table->bind_param("s", $merg);
-                    $create_table->execute();
-                }
-                $comm->close();
+				require("dbconnect.php");
+				$post_table=$_POST['valueup'];
+				$get_id=$conn->prepare("SELECT `nstable` FROM `xplomembers` WHERE `uname`=?");
+				echo($conn->error);
+				$get_id->bind_param("s",$member_page); 
+				$get_id->execute();
+				$get_id->bind_result($p_table);
+				$get_id->store_result();
+				echo("j");
+				while($get_id->fetch())
+				{echo("k");
+				$get_time=$conn->prepare("SELECT `posttime` FROM `$p_table` WHERE `id`=?");
+				echo($conn->error);
+				$get_time->bind_param("i",$post_table);
+				$get_time->execute();
+				$get_time->bind_result($post_time);
+				$get_time->store_result();
+				$get_id->free_result();
+				while($get_time->fetch())
+                {$insert_comments1 = $conn->prepare("INSERT INTO `userreplies` (`posttime`,`whoo`,`whatt`) VALUES (?,?,?)");
+                echo($conn->error);
+                echo($post_time);
+                 $insert_comments1->bind_param("iss", $post_time,$member, $comments);
+                $insert_comments1->execute();
+                
+			}}
+				
+			$get_time->free_result();
+               $conn->close();
+                
+ 
+		       } 
             }
-        }
+         header("Location: {$_SERVER['HTTP_REFERER']}");}
     }
-}
 ?>
