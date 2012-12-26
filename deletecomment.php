@@ -4,7 +4,7 @@ $current_user=$_SESSION['xplo1'];
 $num2=$_GET['con'];
 $table_to_del=$_GET['id'];
 $person1=$_GET['user'];
-if(isset($current_user)
+if(isset($current_user))
 {
 require('dbconnect.php');
 $query=$conn->prepare("DELETE  FROM `userreplies` WHERE `reply_id`=?");
