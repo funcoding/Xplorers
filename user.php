@@ -18,8 +18,9 @@ if (!isset($_SESSION['xplo1'])) {
     $sql->bind_param("s", $checkname);
     $sql->execute();
     $sql->bind_result($profilepic);
-    while($sql->fetch())
-    {$profilepic=$profilepic;}
+    while ($sql->fetch()) {
+        $profilepic = $profilepic;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -35,8 +36,7 @@ if (!isset($_SESSION['xplo1'])) {
 <h1 ><?php
     if ($checkname == $_SESSION['xplo1']) {
         require("spcheck.php");
-    } 
-    
+    }
 ?></h1>
 <script type="text/javascript">
 function des(a,b)
@@ -87,7 +87,7 @@ window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 
 <?php
     if (($_GET['user']) == ($_SESSION['xplo1'])) {
-		?>
+?>
 		
 
 	<div id="Uploadpic" class="modal hide fade in" style="display: none; ">		
@@ -135,13 +135,12 @@ window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 ?>">
 <?php
         echo ($namedis . " ");
-        ?>
+?>
         </a>
         </li>
         
-        <?php 
+        <?php
     }
- 
     $conn->close();
 }
 ?>
