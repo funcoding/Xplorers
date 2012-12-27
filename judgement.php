@@ -30,12 +30,12 @@ if ($_POST['thuuku']) {
     session_start();
     $submit      = $_POST['submit'];
     $member      = $_SESSION['xplo1'];
-    $comments    = $_POST['commentss'];
+    $comments    = trim($_POST['commentss']);
     $member_page = $_POST['id'];
     if (!isset($_SESSION['xplo1'])) {
         header("url=http://xplorers.host56.com");
     } else {
-        if (isset($submit)) {
+        if (!empty($submit)) {
             if (isset($comments)) {
                 require("dbconnect.php");
                 $post_table = $_POST['valueup'];
