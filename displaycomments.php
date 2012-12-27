@@ -31,14 +31,13 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
         $dtime = date("d-m", strtotime($time));
         $ttime = date("H:i", strtotime($time . '+10:30 Hour_minute'));
 ?>
-<div id="co">
 <?php
         if ($userna == $whos) {
-            echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1 width=100% >' . '<tr>' . '<td>' . $dtime . '<strong>' . $userna . '
-</strong>' . ':' . ' ' . htmlentities($non, ENT_QUOTES) . '<input style="float:right;" type="submit"  name="thuuku" value="Thuuki podu"/>' . '</td>' . '</tr>' . '</table>');
+            echo ('<div class="media"><img  class="pull-left" style="width: 50px; height: 50px;" alt="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.gif" src="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.jpg"/>'.  '<div class="media-body"><h4 class="media-heading"> '. $userna . '<input  class="btn" style="float:right" type="submit"  name="thuuku" value="Thuuki podu"/>'.'
+</h4>' .'<p>' . htmlentities($non, ENT_QUOTES) .'<p style="font-size:12px;color:#3B5998;">'.$dtime .'</p>'.'</p></p></div></div>' );
         } else {
-            echo ('<TABLE   border="0" cellpadding=6 style="background-color:#DBE7F9;" border=1  width=100%>' . '<tr>' . '<td>' . $dtime . '<strong>' . $userna . '
-</strong>' . ':' . ' ' . $non . '</td>' . '</tr>' . '</table>');
+            echo ('<div class="media"><img  class="pull-left" style="width: 50px; height: 50px;" alt="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.gif" src="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.jpg"/>'.  '<div class="media-body"><h4 class="media-heading"> '. $userna . '
+</h4>' . '<p>' . htmlentities($non, ENT_QUOTES) . '<p style="font-size:12px;color:#3B5998;">'.$dtime .'</p>'.'</p></div></div>');
         }
        
         echo ($conn->error);
@@ -53,29 +52,32 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
                 $dtime2 = date("d-m", strtotime($tim));
                 $ttime2 = date("H:i", strtotime($tim . '+10:30 Hour_minute'));
                 if ($nam == $whos) {
-                    echo ('<TABLE  border="2" cellpadding=1 style="background-color:#DBE7F9; " border=1  width=100% >' . '<tr>' . '<td>' . $dtime2 . ' ' . '<strong>' . htmlspecialchars($nam) . ':' . $disp . '<input type="button" style="float:right;"  onclick="javascript:des(' . $idtable . ',' . $id1 . ')" value="erase" />' . '</td>' . '</tr>' . '</table>');
+                    echo ('<li class="media" style=" margin-bottom: 1px;background-color:#EDEFF4;margin-left: 50px;margin-top: 0px;"><img  style="width: 32px; height: 32px; padding-top: 5px; padding-left: 5px; padding-right: 0px; margin-right: 5px;" class="pull-left" style="width: 32px; height: 32px;" alt="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.gif" src="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.jpg"/>'.  '<div class="media-body"><h6 class="media-heading"> </h6><p style="font-size:12px;word-wrap:break-word;padding-right: 10px;">'  .'<strong>' .htmlspecialchars($nam) .'</strong>'." ". htmlentities($disp) . '<input type="button" class="btn" style="float:right;"  onclick="javascript:des(' . $idtable . ',' . $id1 . ')" value="erase" /></p><p style="font-size:12px;color:#3B5998;">'.$dtime2 .'</p></div></li>' );
                 } else {
-                    echo ('<TABLE   border="2" cellpadding=1 style="background-color:#DBE7F9;" border=1 width=100% >' . '<tr>' . '<td>' . $dtime2 . ' ' . '<strong>' . htmlspecialchars($nam) . ':' . $disp . '</td>' . '</tr>' . '</table>');
+                    echo ('<li class="media" style=" margin-bottom: 1px;background-color:#EDEFF4;margin-left: 50px;margin-top: 0px;"><img  style="width: 32px; height: 32px; padding-top: 5px; padding-left: 5px; padding-right: 0px; margin-right: 5px;" class="pull-left" style="width: 32px; height: 32px;" alt="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.gif" src="http://www.xplorers.host56.com/xplmemb/'.$userna.'/'.$userna.'.jpg"/>'.  '<div class="media-body"><h6 class="media-heading"> </h6><p style="font-size:12px;word-wrap:break-word;padding-right: 10px;">'  .'<strong>' .htmlspecialchars($nam) .'</strong>'." ". htmlentities($disp) . '</p><p style="font-size:12px;color:#3B5998;">'.$dtime2 .'</p></div></li>' );
                 }
             }
+
 ?>
- </div>
+
  <?php
         
         $querry2->free_result();
          }
        
 ?>
-</div> 
+
 <input type="hidden" value="<?php
         echo ($idtable);
 ?>" name="valueup" />
-<textarea rows="2" cols="15" name="commentss"></textarea>
-<input  type="submit" value="thaaku" name="submit"/>
+<textarea placeholder="Thaaku"  style="resize: none;margin-bottom: 1px; margin-left: 50px; margin-top: 0px; height: 40px; width: 572px;" name="commentss"></textarea>
+<input  style="float:right" class="btn" type="submit" value="thaaku" name="submit"/>
 <input type="hidden" value=<?php
         echo (strip_tags($user));
 ?> name="id"/>
 </form>
+<br>
+<hr>
 <?php
 
     }
