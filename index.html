@@ -17,7 +17,7 @@ $_SESSION['token'] = $token;
 	function browser()
 	{alert("If u are facing problem using chrome, try again after clearing the cookies and cache in chrome.");
 	}
-</script> 
+	</script> 
 <script type="text/javascript">
 $(document).ready(function() {
 $("#login").validate({
@@ -63,21 +63,21 @@ $(element).parents('.control-group').removeClass('error');
 <label>Password:
 <div class="control-group">	
 <input type="password" name="uspass" id="uspass" placeholder="Password"/></label>
-<br>
+  <br>
 </div>
   <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
 <input type="hidden" value="<?php
 echo ($token);
 ?>" name="token"/>
 </form>  	
-<?php
+ <?php
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) {
 ?>
 <body onload="javascript:browser()">
 <?php
 }
 ?>
-<a href="registration.html" id="reg">New User! Signup</a>
+ <a href="registration.html" id="reg">New User! Signup</a>
 </div>
 </div>
 </body>
