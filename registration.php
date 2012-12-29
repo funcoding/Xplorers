@@ -86,23 +86,21 @@ if (isset($_POST['register'])) {
 	<?php
             } else {
                 $hrefval = 'xplmemb/' . $xpalpha . '/' . $xpalpha . '.html?user=' . $xpalpha;
-                $qsql    = $conn->prepare("INSERT INTO xplomembers (memid,uname,upass,pagepath,nstable) VALUES (NULL,(?),MD5(?),(?),(?))");
-                $qsql->bind_param("ssss", $xpalpha, $passxp, $hrefval, $xpalpha);
+                $qsql    = $conn->prepare("INSERT INTO xplomembers (uname,upass,pagepath,nstable) VALUES (?,?,?,?)");
+                $qsql->bind_param("ssss", $xpalpha, MD5($passxp), $hrefval, $xpalpha);
                 $qsql->execute();
                 mkdir("xplmemb/" . $xpalpha);
                 chmod("xplmemb/" . $xpalpha, 0777);
                 copy("user.php", "xplmemb/$xpalpha/$xpalpha.html");
+                copy("deletecomment.php", "xplmemb/$xpalpha/deletecomment.php");
                 copy("displaycomments.php", "xplmemb/$xpalpha/displaycomments.php");
                 copy("judgement.php", "xplmemb/$xpalpha/judgement.php");
                 copy("dbconnect.php", "xplmemb/$xpalpha/dbconnect.php");
-                copy("dbcomment.php", "xplmemb/$xpalpha/dbcomment.php");
                 copy("logout.php", "xplmemb/$xpalpha/logout.php");
                 copy("resize-class.php", "xplmemb/$xpalpha/resize-class.php");
                 copy("resize.php", "xplmemb/$xpalpha/resize.php");
-                copy("uploadpic.php", "xplmemb/$xpalpha/uploadpic.php");
                 copy("upload1.php", "xplmemb/$xpalpha/upload1.php");
                 copy("insertcomments.php", "xplmemb/$xpalpha/insertcomments.php");
-                copy("lu.css", "xplmemb/$xpalpha/lu.css");
                 copy("sp.php", "xplmemb/$xpalpha/sp.php");
                 copy("spcheck.php", "xplmemb/$xpalpha/spcheck.php");
                 copy("jwplayer.js", "xplmemb/$xpalpha/jwplayer.js");
@@ -110,7 +108,7 @@ if (isset($_POST['register'])) {
                 copy("home.php", "xplmemb/$xpalpha/home.php");
                 copy("blank.jpg", "xplmemb/$xpalpha/$xpalpha.jpg");
                 copy("onl.jpg", "xplmemb/$xpalpha/onl.jpg");
-                $conn->query("CREATE TABLE `a4313936_xplorer`.`$xpalpha` (`id` INT NOT NULL AUTO_INCREMENT, `xplotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `coname` VARCHAR(15) NOT NULL, `nsense` VARCHAR(1000) NOT NULL, INDEX (`id`)) ENGINE = MyISAM");
+                $conn->query("CREATE TABLE `a4313936_xplorer`.`$xpalpha` (`id` INT NOT NULL AUTO_INCREMENT, `posttime` INT( 4 ) NOT NULL ,`xplotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,`coname` VARCHAR(15) NOT NULL, `nsense` VARCHAR(1000) NOT NULL, INDEX (`id`)) ENGINE = MyISAM");
                 $patth  = "xplmemb/" . $xpalpha . "/" . $xpalpha . ".jpg";
                 $update = $conn->prepare("UPDATE xplomembers SET upict=(?) WHERE uname=(?)");
                 $update->bind_param("ss", $patth, $xpalpha);
