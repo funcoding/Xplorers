@@ -1,9 +1,9 @@
 <?php
 session_start();
 require('dbconnect.php');
-$tt        = "";
-$stat2     = "UPDATE `xplomembers` SET `sess` = '" . $tt . "' WHERE `uname`='" . $_SESSION['xplo1'] . "'";
-$setlogged = mysql_query($stat2);
+$userlogout=$_SESSION['xplo1'];
+$status       = "offline";
+$conn->query("UPDATE `xplomembers` SET `sess` = $status WHERE `uname`= $userlogout");
 session_unset();
 session_destroy();
 header('location:http://www.xplorers.host56.com/index.html');
