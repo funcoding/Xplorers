@@ -16,6 +16,8 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
         $usertable = $usertable;
     }
     $disptable = $conn->prepare("SELECT `nsense`,`xplotime`,`coname`,`id`,`posttime` FROM `$usertable` ORDER BY id DESC");
+    if($disptable)
+    {
     $disptable->execute();
     $disptable->bind_result($non, $time, $userna, $idtable, $time_join);
     $disptable->store_result();
@@ -43,7 +45,7 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
         echo ($conn->error);
         if ($conn->query("SELECT `posttime` FROM `userreplies` WHERE `posttime`=$time_join")) {
             
-            $querry2 = $conn->prepare("SELECT userreplies.whoo,userreplies.whatt,userreplies.time,userreplies.reply_id FROM userreplies WHERE userreplies.posttime=$time_join");
+            $querry2 = $conn->prepare("SELECT userreplies.whoo,userreplies.whatt,userreplies.time,userreplies.reply_id FROM userreplies WHERE userreplies.posttime=$time_join ORDER BY reply_id ASC");
             echo ($conn->error);
             $querry2->execute();
             $querry2->bind_result($nam, $disp, $tim, $id1);
@@ -81,5 +83,5 @@ if ((!isset($_SESSION['xplo1'])) && ($_SESSION['xplo1'] == '')) {
 <?php
 
     }
-}
+}}
 ?>

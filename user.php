@@ -18,8 +18,9 @@ if (!isset($_SESSION['xplo1'])) {
     $sql->bind_param("s", $checkname);
     $sql->execute();
     $sql->bind_result($profilepic);
-    while($sql->fetch())
-    {$profilepic=$profilepic;}
+    while ($sql->fetch()) {
+        $profilepic = $profilepic;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -35,8 +36,7 @@ if (!isset($_SESSION['xplo1'])) {
 <h1 ><?php
     if ($checkname == $_SESSION['xplo1']) {
         require("spcheck.php");
-    } 
-    
+    }
 ?></h1>
 <script type="text/javascript">
 function des(a,b)
@@ -87,7 +87,7 @@ window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 
 <?php
     if (($_GET['user']) == ($_SESSION['xplo1'])) {
-		?>
+?>
 		
 
 	<div id="Uploadpic" class="modal hide fade in" style="display: none; ">		
@@ -135,13 +135,12 @@ window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 ?>">
 <?php
         echo ($namedis . " ");
-        ?>
+?>
         </a>
         </li>
         
-        <?php 
+        <?php
     }
- 
     $conn->close();
 }
 ?>
@@ -153,7 +152,7 @@ window.location="/deletecomment.php?no="+a+"&id="+b+"&user="+c;
 <div class="span9">
 <div class="thumbnail" style="margin-top: 0px; border-top-width: 0px; border-left-width: 1px; margin-left: -20px; padding-top: 80px; border-right-width: 0px; padding-left: 80px;">
 <form class="well" method="post" action="insertcomments.php" style="width: 350px;">
-<label><textarea name="textinpu" placeholder="Type something"></textarea></label>
+<label><textarea placeholder="Type something" name="textinpu" style="resize: none; width: 350px; height: 90px; border-right-width: 1px; padding-right: 0px;"></textarea></label>
 <input type="submit" class="btn btn-primary "  name="submit" value="post"/> 
 <input type="hidden" value="<?php
 echo ($checkname);

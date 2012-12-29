@@ -13,17 +13,13 @@ if ((($_FILES["file"]["type"] == "image/gif") || ($_FILES["file"]["type"] == "im
         rename($_FILES["file"]["name"], $usename . ".jpg");
         $patth = "xplmemb/" . $usename . "/" . $usename . ".jpg";
         require('dbconnect.php');
-        mysql_query("UPDATE xplomembers SET upict='$patth' WHERE uname='$usename'");
-        mysql_close($conn);
+        $conn->query("UPDATE xplomembers SET upict='$patth' WHERE uname='$usename'");
+        $conn->close();
     }
 } else {
     echo "Invalid file";
 }
-require('dbconnect.php');
-$who1 = mysql_query("SELECT * FROM xplomembers WHERE uname='$usename'");
-while ($som = mysql_fetch_array($who1)) {
-    $tab = $som['pagepath'];
-}
-header("refresh:0,url=http://www.xplorers.host56.com/$tab");
-mysql_close($conn);
+
+header("Location: {$_SERVER['HTTP_REFERER']}");
+$conn->close();
 ?>

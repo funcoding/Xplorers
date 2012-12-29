@@ -2,7 +2,7 @@
 session_start();
 $checkname=$_POST['id'];
 $name=$_SESSION['xplo1'];
-$text=$_POST['textinpu'];
+$text=trim($_POST['textinpu']);
 if(!isset($_SESSION['xplo1']))
 {header("url=http://xplorers.host56.com");}
 else
@@ -10,7 +10,7 @@ else
  $submit=$_POST['submit'];
  if(isset($submit)) 
  {
-    if(isset($text))
+    if(!empty($text))
     {
 		$cmmname=$conn->prepare("SELECT `nstable` FROM `xplomembers` WHERE `uname`=?");
 		$cmmname->bind_param("s",$checkname);
