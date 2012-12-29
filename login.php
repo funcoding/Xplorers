@@ -12,12 +12,11 @@ if (isset($_POST["submit"]) and !empty($_POST["usname"]) and !empty($_POST["uspa
 }
 function login_success()
 {
-    $xpuser = trim($_POST["usname"]);
-    $xppass = trim($_POST["uspass"]);
-    $xppass = crypt($xppass, $salt);
     require("dbconnect.php");
-    $loginquery = $conn->prepare("SELECT `pagepath` FROM `xplomembers` WHERE `uname`=? AND `newpass`=?");
-    $loginquery->bind_param("ss", $xpuser, $xppass);
+    $xpuser     = trim($_POST["usname"]);
+    $xppass     = trim($_POST["uspass"]);
+    $loginquery = $conn->prepare("SELECT `pagepath` FROM `xplomembers` WHERE `uname`=? AND `upass`=?");
+    $loginquery->bind_param("ss", $xpuser, MD5($xppass));
     $loginquery->execute();
     $loginquery->bind_result($path);
     $loginquery->store_result();
