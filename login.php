@@ -6,22 +6,34 @@ if (!isset($_SESSION['token']) || !isset($_POST['token'])) {
     exit();
 }
 if (isset($_POST["submit"]) and !empty($_POST["usname"]) and !empty($_POST["uspass"])) {
-    $xpuser = addslashes(trim($_POST["usname"]));
-    $xppass = addslashes(trim(md5($_POST["uspass"])));
-    $con    = mysql_connect("mysql9.000webhost.com", "a4313936_vinay", "transcend89");
-    if (!$con) {
-        die('could not connect:' . mysql_error());
-    } else {
-        mysql_select_db("a4313936_xplorer", $con);
-        $validation = mysql_query("SELECT * FROM xplomembers WHERE uname='$xpuser' AND upass='$xppass'");
-        $entry      = mysql_fetch_assoc($validation);
-        mysql_close($con);
-        if (($entry['uname'] == $xpuser) && ($entry['upass'] == $xppass)) {
-            $path = $entry['pagepath'];
-            session_start();
+    login_success();
+} else {
+    login_fail();
+}
+function login_success()
+{
+    $xpuser = trim($_POST["usname"]);
+    $xppass = trim($_POST["uspass"]);
+    $xppass = crypt($xppass, $salt);
+    require("dbconnect.php");
+    $loginquery = $conn->prepare("SELECT `pagepath` FROM `xplomembers` WHERE `uname`=? AND `newpass`=?");
+    $loginquery->bind_param("ss", $xpuser, $xppass);
+    $loginquery->execute();
+    $loginquery->bind_result($path);
+    $loginquery->store_result();
+    if ($loginquery->num_rows == 1) {
+        while ($loginquery->fetch()) {
             $_SESSION['xplo1'] = $xpuser;
             header("location:$path");
-        } else {
+            $loginquery->free_result();
+        }
+    } else {
+        login_fail();
+    }
+    $conn->close();
+}
+function login_fail()
+{
 ?>
 <!DOCTYPE html>
 <html>
@@ -86,7 +98,7 @@ $(element).parents('.control-group').removeClass('error');
 </div>
   <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
 <input type="hidden" value="<?php
-            echo ($token);
+    echo ($token);
 ?>" name="token"/>
 </form>
 <div class="alert alert-error">  
@@ -94,11 +106,11 @@ $(element).parents('.control-group').removeClass('error');
   <strong>Error!</strong>Wrong username or password. Try again  
 </div>    	
  <?php
-            if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) {
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) {
 ?>
 <body onload="javascript:browser()">
 <?php
-            }
+    }
 ?>
  <a href="registration.html" id="reg">New User! Signup</a>
 </div>
@@ -107,7 +119,5 @@ $(element).parents('.control-group').removeClass('error');
 </html>
 
 <?php
-        }
-    }
 }
 ?>
