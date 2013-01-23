@@ -9,6 +9,3 @@ Currently the site supports only simple features such as uploading profile pic, 
 <br>
 <link>The link is http://xplorers-appsbyvinay.rhcloud.com/index.php</link>
 
-=======
-<link>http://xplorers-appsbyvinay.rhcloud.com</link>
->>>>>>> 79fad60ee638ff5d651719a43f2628f67cff663b
