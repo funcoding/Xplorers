@@ -1,26 +1,13 @@
 <?php
 session_start();
 require('dbconnect.php');
-if (isset($_SESSION['xplo1']) && isset($_SESSION['token'])) {
-    $stat      = "online";
-    $setlogged = $conn->prepare("UPDATE `xplomembers` SET `time`=CURTIME(),`tstamp`=now(),  `sess`='" . $stat . "' WHERE `uname` ='" . $_SESSION['xplo1'] . "'");
-    $setlogged->execute();
+$checkname = $_GET['name'];
+$userid=$_GET['user'];
+if (!isset($_SESSION['userid'])) {
+    header("url=http://xplorers-appsbyvinay.rhcloud.com");
 } else {
-    $conn->close();
-}
-$checkname = $_GET['user'];
-if (!isset($_SESSION['xplo1'])) {
-    header("url=http://xplorers.host56.com");
-} else {
-    $head = $_SESSION['xplo1'];
-    $head = strtoupper($head);
-    $sql  = $conn->prepare("select `upict` from xplomembers where `uname`=?");
-    $sql->bind_param("s", $checkname);
-    $sql->execute();
-    $sql->bind_result($profilepic);
-    while ($sql->fetch()) {
-        $profilepic = $profilepic;
-    }
+ $profilepic="";
+
 ?>
 
 <!DOCTYPE html>
@@ -30,23 +17,17 @@ if (!isset($_SESSION['xplo1'])) {
 <head>
 <title>Xplorers</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script>
 <script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
-<script src="/js/bootstrap.js"></script>
-<link href="/css/bootstrap.css" rel="stylesheet"> 
-<h1 ><?php
-    if ($checkname == $_SESSION['xplo1']) {
-        require("spcheck.php");
-    }
-?></h1>
-
-
-
+<script src="include/js/bootstrap.js"></script>
+<link href="include/css/bootstrap.css" rel="stylesheet"> 
+<h1 ></h1>
 
 <script type="text/javascript">
 function deletepost(tableid)
 {
 var page_table="<?php
-    echo ($checkname);
+    echo ($userid);
 ?>";
 var buttonname=document.getElementById("deletepost_"+tableid);
 var condition=buttonname.getAttribute("name");
@@ -55,7 +36,6 @@ $.ajax({
 	url:"judgement.php",
 	data:{submit:condition,page:page_table,value_table:tableid},
 	success:function(result){
-		alert(result);
 		$("#Post_no_"+tableid).hide();
 	}
 });
@@ -65,13 +45,17 @@ $.ajax({
 <script type="text/javascript">
 function insert_reply(postno,commentno)
 {var pagename="<?php
-    echo ($checkname);
+    echo ($userid);
 ?>";
     var comment_date="<?php
     echo (date("d-m", strtotime(now)));
 ?>";
     var loggedin="<?php
-    echo ($_SESSION['xplo1']);
+    echo ($_SESSION['userid']);
+
+?>";
+var loggedin_username="<?php
+echo($_SESSION['username']);
 ?>";
 	 var comment= $('#commentarea'+postno).val();
 	$.ajax({
@@ -82,7 +66,7 @@ function insert_reply(postno,commentno)
 		success:function(resultreceived)
 		{
 		
-			var html='<li id="subcomment_no_'+resultreceived.id_comment+'" class="media" style=" margin-bottom: 1px;background-color:#EDEFF4;margin-left: 50px;margin-top: 0px;"><img  style="width: 32px; height: 32px; padding-top: 5px; padding-left: 5px; padding-right: 0px; margin-right: 5px;" class="pull-left" style="width: 32px; height: 32px;" alt="http://www.xplorers.host56.com/xplmemb/'+loggedin+'/'+loggedin+'.gif" src="http://www.xplorers.host56.com/xplmemb/'+loggedin+'/'+loggedin+'.jpg"/><div class="media-body"><h6 class="media-heading"> </h6><p style="font-size:12px;word-wrap:break-word;padding-right: 10px;"><strong>'+loggedin+'</strong>&nbsp;'+ resultreceived.comments+ '<input type="button"  id="erase'+resultreceived.id_comment+'" class="btn" style="float:right;"  onClick="javascript:des('+postno+ ',' +resultreceived.id_comment+')" value="erase" /></p><p style="font-size:12px;color:#3B5998;">'+comment_date+'</p></div></li>';
+			var html='<li id="subcomment_no_'+resultreceived.id_comment+'" class="media" style=" margin-bottom: 1px;background-color:#EDEFF4;margin-left: 50px;margin-top: 0px;"><img  style="width: 32px; height: 32px; padding-top: 5px; padding-left: 5px; padding-right: 0px; margin-right: 5px;" class="pull-left" style="width: 32px; height: 32px;" alt="http://xplorers-appsbyvinay.rhcloud.com/profilepics'+loggedin+'.gif" src="http://xplorers-appsbyvinay.rhcloud.com/profilepics/'+loggedin+'.jpg"/><div class="media-body"><h6 class="media-heading"> </h6><p style="font-size:12px;word-wrap:break-word;padding-right: 10px;"><strong>'+loggedin_username+'</strong>&nbsp;'+ resultreceived.comments+ '<input type="button"  id="erase'+resultreceived.id_comment+'" class="btn" style="float:right;"  onClick="javascript:des('+postno+ ',' +resultreceived.id_comment+')" value="erase" /></p><p style="font-size:12px;color:#3B5998;">'+comment_date+'</p></div></li>';
 			
 				$("#commentfieldno"+postno).prepend(html);
 				$('#commentarea'+postno).val('');
@@ -95,11 +79,12 @@ function insert_reply(postno,commentno)
 
 	
 </script>
+
 <script type="text/javascript">
 function des(a,b){
 
 var c ="<?php
-    echo ($checkname);
+    echo ($userid);
 ?>";
 	$.ajax({
   type: "POST",
@@ -117,7 +102,15 @@ var c ="<?php
 });
 }
 </script>
-
+<script type="text/javascript"> 
+        // wait for the DOM to be loaded 
+        $(document).ready(function() { 
+            // bind 'myForm' and provide a simple callback function 
+            $('#profilepic').ajaxForm(function(result) { 
+                alert(result); 
+            }); 
+        }); 
+    </script> 
 
 </head>
 <body>
@@ -131,7 +124,7 @@ var c ="<?php
 		 <li class="active">
 		<li><a href="home.php">Home</a></li>
 		<li><a href="logout.php">Logout</a></li>
-		<li><a href="http://www.xplorers.host56.com/xplmemb/xplorercomments/xplorercomments.html?user=xplorercomments">TimepassBoard</a></li>
+		
 </li>
 </ul>
 </div>
@@ -151,13 +144,15 @@ var c ="<?php
 
 <div class="thumbnail" style="width: 130px; height: 140px; margin-top: 60px;">
 	
-<img  src="http://www.xplorers.host56.com/<?php
-    echo ($profilepic);
-?>" /> 
+<img  src="http://xplorers-appsbyvinay.rhcloud.com/profilepics/
+<?php
+echo ($userid);
+?>
+.jpg" /> 
 </div>
 
 <?php
-    if (($_GET['user']) == ($_SESSION['xplo1'])) {
+    if (($_GET['user']) == ($_SESSION['userid'])) {
 ?>
 		
 
@@ -166,7 +161,7 @@ var c ="<?php
 <a class="close" data-dismiss="modal">x</a>
 <h3>Select Profile Pic</h3>
 </div>
-<form method="post" action="upload1.php" enctype="multipart/form-data">	
+<form method="post" id="profilepic" action="include/upload1.php" enctype="multipart/form-data">	
 <div class="modal-body">
 
 	<label>Filename:</label>
@@ -175,7 +170,7 @@ var c ="<?php
 <div class="modal-footer">
 <p>Supported Format:jpeg,gif</p>
 <p>Maximum size:2 mb</p>	
-<input type="submit" name="submit" value="Upload" class="btn btn-success"/>
+<input type="submit" name="submit" id="uploadprofile"  value="Upload" class="btn btn-success"/>
 <a href="#" class="btn" data-dismiss="modal">Close</a>
 </div>
 </div>
@@ -195,19 +190,20 @@ var c ="<?php
 <div class="thumbnail" style="max-width: 150px; overflow: auto; height: 300px; border-top-width: 0px; border-bottom-width: 0px;padding: 0px;">
 <ul class="nav nav-tabs nav-stacked" style="margin-bottom: 0px;">
 <?php
-    require('dbconnect.php');
-    $dis = $conn->prepare("SELECT `memid`,`uname`,`pagepath`,`time`,`sess` FROM xplomembers WHERE `memid` ORDER BY `memid` ASC");
-    $dis->execute();
-    $dis->bind_result($nameid, $namedis, $hreflink, $time, $ses);
-    while ($dis->fetch()) {
+    require('include/dbconnect.php');
+    $display_friends = $conn->prepare("SELECT memid,member_name FROM members ORDER BY memid ASC");
+    $display_friends->execute();
+    $display_friends->bind_result($friends_id, $friends_name);
+    $display_friends->store_result();
+    while ($display_friends->fetch()) {
 ?>
 
 <li>
-<a   href="http://www.xplorers.host56.com/<?php
-        echo ($hreflink);
+<a   href="http://xplorers-appsbyvinay.rhcloud.com/user.php?user=<?php echo($friends_id);?>&name=<?php
+        echo ($friends_name);
 ?>">
 <?php
-        echo ($namedis);
+echo($friends_name);
 ?>
         </a>
         </li>
@@ -231,7 +227,7 @@ var c ="<?php
 <label><textarea style="resize:none" name="textinpu" placeholder="Type something"></textarea></label>
 <input type="submit" class="btn btn-primary "  name="submit" value="post"/> 
 <input type="hidden" value="<?php
-echo ($checkname);
+echo ($userid);
 ?>" name="id"/>  
 </form>
 <?php

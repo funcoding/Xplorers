@@ -1,49 +1,8 @@
 <?php
 session_start();
-if (!isset($_SESSION['token']) || !isset($_POST['token'])) {
-    echo "bad request";
-    header("refresh:1;url=http://xplorers-appsbyvinay.rhcloud.com");
-    exit();
-}
-if (isset($_POST["submit"]) and !empty($_POST["login_id"]) and !empty($_POST["login_password"])) {
-    login_success();
-} else {
-    login_fail();
-}
-function login_success()
-{
-    require("include/dbconnect.php");
-    if ($mysqli->connect_errno) {
-    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-}
-    $user_email_id     = trim($_POST["login_id"]);
-    $user_password     = trim($_POST["login_password"]);
-    $loginquery = $conn->prepare("SELECT `memid`,activation_status,member_name FROM `members` WHERE `email_address`=? AND member_password=?");
-    $loginquery->bind_param("ss",$user_email_id,crypt($user_password,$salt));
-    $loginquery->execute();
-    $loginquery->bind_result($member,$activation,$user_name);
-    $loginquery->store_result();
-    if ($loginquery->num_rows == 1) {
-        while ($loginquery->fetch()) {
-			if($activation==1)
-            {$_SESSION['username'] = $user_name;
-            $_SESSION['userid']=$member;
-            header("location:user.php?user=$member&name=$user_name");
-            $loginquery->free_result();}
-            else
-            {
-				login_fail(true);
-				}
-        }
-    } else {
-        login_fail(false);
-    }
-    $conn->close();
-}
-function login_fail($activation)
-{
+$token             = md5(uniqid(mt_rand(), TRUE));
+$_SESSION['token'] = $token;
 ?>
- 	
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
@@ -102,33 +61,14 @@ $(element).parents('.control-group').removeClass('error');
   <br>
 </div>
   <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
-<input type="hidden" value="<?php
+<input type="hidden" value="
+<?php
 echo ($token);
-?>" name="token"/>
-</form> 
-<div class="alert alert-error">  
-<?php
-if($activation===true)
-{
-	?>
-
-<p><strong>The Account has not been activated yet.</strong></p>
-<?php
-}
-elseif($activation===false)
-{
-	?>
-<p><strong>Error!</strong>Wrong username or password. Try again</p>
-<?php
-}
 ?>
-</div>    	
+" name="token"/>
+</form>  	
  <a href="registration.php" id="reg">New User! Signup</a>
 </div>
 </div>
 </body>
 </html>
-
-<?php
-}
-?>

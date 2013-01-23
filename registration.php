@@ -13,11 +13,14 @@
 $(document).ready(function() {
 $("#form1").validate({
 rules: {
-namealpha: {required:true,
+user: {required:true,
 rangelength: [4, 15]},
-passalpha1: {required:true,
+user_email:{required:true,
+email:true,
+},
+password: {required:true,
 rangelength: [6, 10]},
-passalpha2: {equalTo: "#passalpha1"}
+retype_password: {equalTo: "#password"}
 },
 messages:{
 	namealpha:{required:"Login Name is required"},
@@ -39,7 +42,7 @@ $(element).parents('.control-group').removeClass('error');
 });
 </script>
     <title></title>
-    <link href="css/bootstrap.css" rel="stylesheet"> 
+    <link href="include/css/bootstrap.css" rel="stylesheet"> 
     <!--[if IE]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -48,35 +51,40 @@ $(element).parents('.control-group').removeClass('error');
 	 <div class="navbar">
 		  <div class="navbar-inner"> 
 		  <div class="container" style="padding-left: 50px; border-left-width: 0px; margin-left: 20px;"> 
-		  <a class="brand" href="http://xplorers.host56.com">Xplorers</a>
+		  <a class="brand" href="http://xplorers-appsbyvinay.rhcloud.com">Xplorers</a>
 		 </div>
 		 </div>
 		 </div>
 	  <div class="row">
   <div class="span6 offset4">
 <fieldset>
-<form class="well" id="form1" action="registration.html" method="post"  style="width: 580px;">
+<form class="well" id="form1" action="registration.php" method="post"  style="width: 580px;">
 <legend>New User</legend>
 
-<p>Enter Desired Login Name <div class="control-group">	 <input type="text" name="namealpha" id="namealpha"></input></p></div>
-<p>Enter Password  <div class="control-group">	<input type="password" name="passalpha1" id="passalpha1" /></p> </div>
-<p>Retype Password <div class="control-group">	<input type="password" name="passalpha2" id="passalpha2" /></p> </div>
+<p>Enter Desired Login Name <div class="control-group">	 <input type="text" name="user" id="user"></input></p></div>
+<p>E-mail <div class="control-group">	 <input type="text" name="user_email" id="user_email"></input></p></div>
+<p>Enter Password  <div class="control-group">	<input type="password" name="password" id="password" /></p> </div>
+<p>Retype Password <div class="control-group">	<input type="password" name="retype_password" id="retype_password" /></p> </div>
 <input type="submit" value="Register" name="register" class="btn btn-primary "/>
 
 <?php
-require('dbconnect.php');
+error_reporting(E_ALL);
+require('include/dbconnect.php');
+
 if (isset($_POST['register'])) {
-    if (isset($_POST['namealpha']) && isset($_POST['passalpha1']) && ($_POST['passalpha1'] == $_POST['passalpha2']) && isset($_POST['passalpha2']) && ctype_alnum($_POST['namealpha']) && !preg_match('/ /', $_POST['namealpha'])) {
-        $xpalpha = (trim($_POST['namealpha']));
-        $passxp  = (trim($_POST['passalpha1']));
-        $count1  = strlen($xpalpha);
-        $count2  = strlen($passxp);
+    if (isset($_POST['user']) && isset($_POST['password']) && ($_POST['password'] == $_POST['retype_password']) && isset($_POST['retype_password']) && ctype_alnum($_POST['user']) && !preg_match('/ /', $_POST['user'])) {
+        $member_name = (trim($_POST['user']));
+        $member_email=(trim($_POST['user_email']));
+        $password  = (trim($_POST['password']));
+        $count1  = strlen($member_name);
+        $count2  = strlen($password);
         if ((4 <= $count1 && $count1 <= 15 && 6 <= $count2 && $count2 <= 10)) {
-            $ncheck = $conn->prepare("SELECT uname FROM xplomembers WHERE uname=(?)");
-            $ncheck->bind_param("s", $xpalpha);
-            $ncheck->execute();
-            $ncheck->bind_result($ncheck1);
-            if ($ncheck->fetch() != 0) {
+			 
+            $check_member = $conn->prepare("SELECT memid FROM members WHERE email_address=?");
+            $check_member->bind_param("s", $member_email);
+            $check_member->execute();
+            $check_member->bind_result($member_status); 
+            if ($check_member->fetch() != 0) {
 ?>
 <div class="alert alert-error"> 
 <?php
@@ -85,37 +93,33 @@ if (isset($_POST['register'])) {
 	</div>
 	<?php
             } else {
-                $hrefval = 'xplmemb/' . $xpalpha . '/' . $xpalpha . '.html?user=' . $xpalpha;
-                $qsql    = $conn->prepare("INSERT INTO xplomembers (uname,upass,pagepath,nstable) VALUES (?,?,?,?)");
-                $qsql->bind_param("ssss", $xpalpha, MD5($passxp), $hrefval, $xpalpha);
+				$activation_key=mt_rand().mt_rand().mt_rand();
+				$table_name=uniqid();
+				$activation_status=0;
+                $qsql    = $conn->prepare("INSERT INTO members (member_name,member_password,email_address,activation_key,activation_status,$member_table) VALUES (?,?,?,?,?,?)");
+                $qsql->bind_param("ssssis", $member_name, crypt($password,$salt), $member_email,$activation_key,$activation_status,$table_name);
                 $qsql->execute();
-                mkdir("xplmemb/" . $xpalpha);
-                chmod("xplmemb/" . $xpalpha, 0777);
-                copy("user.php", "xplmemb/$xpalpha/$xpalpha.html");
-                copy("deletecomment.php", "xplmemb/$xpalpha/deletecomment.php");
-                copy("displaycomments.php", "xplmemb/$xpalpha/displaycomments.php");
-                copy("judgement.php", "xplmemb/$xpalpha/judgement.php");
-                copy("dbconnect.php", "xplmemb/$xpalpha/dbconnect.php");
-                copy("logout.php", "xplmemb/$xpalpha/logout.php");
-                copy("resize-class.php", "xplmemb/$xpalpha/resize-class.php");
-                copy("resize.php", "xplmemb/$xpalpha/resize.php");
-                copy("upload1.php", "xplmemb/$xpalpha/upload1.php");
-                copy("insertcomments.php", "xplmemb/$xpalpha/insertcomments.php");
-                copy("sp.php", "xplmemb/$xpalpha/sp.php");
-                copy("spcheck.php", "xplmemb/$xpalpha/spcheck.php");
-                copy("jwplayer.js", "xplmemb/$xpalpha/jwplayer.js");
-                copy("player.swf", "xplmemb/$xpalpha/player.swf");
-                copy("home.php", "xplmemb/$xpalpha/home.php");
-                copy("blank.jpg", "xplmemb/$xpalpha/$xpalpha.jpg");
-                copy("onl.jpg", "xplmemb/$xpalpha/onl.jpg");
-                $conn->query("CREATE TABLE `a4313936_xplorer`.`$xpalpha` (`id` INT NOT NULL AUTO_INCREMENT, `posttime` INT( 4 ) NOT NULL ,`xplotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,`coname` VARCHAR(15) NOT NULL, `nsense` VARCHAR(1000) NOT NULL, INDEX (`id`)) ENGINE = MyISAM");
-                $patth  = "xplmemb/" . $xpalpha . "/" . $xpalpha . ".jpg";
-                $update = $conn->prepare("UPDATE xplomembers SET upict=(?) WHERE uname=(?)");
-                $update->bind_param("ss", $patth, $xpalpha);
-                $update->execute();
+                if(!$qsql)
+                {echo($conn->error);}
+                $pic_name=$conn->insert_id;
+                
+                copy("blank.jpg", "profilepics/$pic_name.jpg");
+                $conn->query("CREATE TABLE xplorers.$table_name (
+								post_id int not null auto_increment,
+								unix_time int not null,
+								member_posted int not null ,
+								member_posts varchar(500) not null,
+								primary key (post_id),
+								foreign key (member_posted) references members(memid)
+								)engine=innodb");
+				
+	            
                 $conn->close();
-                echo ("Thank you for registering. you will be redirected in 5 secs");
-                header("refresh:5,url=http://www.xplorers.host56.com/index.html");
+                $subject="Registration on Xplorers";
+                $header="From: appsbyvinay@rhcloud.com";
+                $message="Hi ".$member_name.",\nThank you for registering on xplorers site. Please click on the below link to activate your account\nhttp://xplorers-appsbyvinay.rhcloud.com/confirmaccount.php?email=".$member_email."&activationkey=".$activation_key;
+                mail($member_email,$subject,$message,$header);
+                header("Location: http://xplorers-appsbyvinay.rhcloud.com/");
             }
         } else
             echo ("error in filling form..");

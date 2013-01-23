@@ -1,27 +1,27 @@
 <?php
 session_start();
-$checkname = $_POST['id'];
-$name      = $_SESSION['xplo1'];
+$check_id = $_POST['id'];
+$name_id      = $_SESSION['userid'];
 $text      = $_POST['textinpu'];
-if (!isset($_SESSION['xplo1'])) {
-    header("url=http://xplorers.host56.com");
+if (!isset($_SESSION['userid'])) {
+    header("url=http://xplorers-appsbyvinay.rhcloud.com");
 } else {
-    require('dbconnect.php');
+    require('include/dbconnect.php');
     $submit = $_POST['submit'];
     if (isset($submit)) {
         if (!empty($text)) {
-            $cmmname = $conn->prepare("SELECT `nstable` FROM `xplomembers` WHERE `uname`=?");
-            $cmmname->bind_param("s", $checkname);
+            $cmmname = $conn->prepare("SELECT `member_table` FROM `members` WHERE `memid`=?");
+            $cmmname->bind_param("s", $check_id);
             $cmmname->execute();
             $cmmname->store_result();
-            $cmmname->bind_result($cmmtable);
-            $time = strtotime(now);
+            $cmmname->bind_result($commenttable);
+            $time_of_post = strtotime(now);
             while ($cmmname->fetch()) {
-                $action = $conn->prepare("INSERT INTO `$cmmtable`(`nsense`,`coname`,`posttime`) VALUES (?,?,$time)");
+                $action = $conn->prepare("INSERT INTO `$commenttable`(`member_posts`,`member_posted`,`unix_time`) VALUES (?,?,$time_of_post)");
                 if (!$actions) {
                     echo ($conn->error);
                 }
-                $action->bind_param("ss", $text, $name);
+                $action->bind_param("ss", $text, $name_id);
                 $action->execute();
             }
             $conn->close();
