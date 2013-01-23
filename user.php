@@ -103,9 +103,9 @@ var c ="<?php
 }
 </script>
 <script type="text/javascript"> 
-        // wait for the DOM to be loaded 
+        
         $(document).ready(function() { 
-            // bind 'myForm' and provide a simple callback function 
+           
             $('#profilepic').ajaxForm(function(result) { 
                 alert(result); 
             }); 
@@ -122,8 +122,7 @@ var c ="<?php
 		 <div class="nav-collapse"> 
 		 <ul class="nav"> 
 		 <li class="active">
-		<li><a href="<?php
-            header("location:user.php?user= $_SESSION['userid']&name=$_SESSION['username']");?>">Home</a></li>
+		<li><a href="http://xplorers-appsbyvinay.rhcloud.com/user.php?user=<?php echo($_SESSION['userid']);?>&name=<?php echo($_SESSION['username']);?>">Home</a></li>
 		<li><a href="logout.php">Logout</a></li>
 		
 </li>
