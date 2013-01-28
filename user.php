@@ -1,13 +1,11 @@
 <?php
 session_start();
-require('dbconnect.php');
 $checkname = $_GET['name'];
-$userid=$_GET['user'];
+$userid    = $_GET['user'];
+require('include/dbconnect.php');
 if (!isset($_SESSION['userid'])) {
     header("url=http://xplorers-appsbyvinay.rhcloud.com");
 } else {
- $profilepic="";
-
 ?>
 
 <!DOCTYPE html>
@@ -52,10 +50,9 @@ function insert_reply(postno,commentno)
 ?>";
     var loggedin="<?php
     echo ($_SESSION['userid']);
-
-?>";
+?>"; 
 var loggedin_username="<?php
-echo($_SESSION['username']);
+    echo ($_SESSION['username']);
 ?>";
 	 var comment= $('#commentarea'+postno).val();
 	$.ajax({
@@ -65,11 +62,14 @@ echo($_SESSION['username']);
 		data:{id:pagename,posttableno:postno,commentss:comment,submit:"insertreply"},
 		success:function(resultreceived)
 		{
-		
-			var html='<li id="subcomment_no_'+resultreceived.id_comment+'" class="media" style=" margin-bottom: 1px;background-color:#EDEFF4;margin-left: 50px;margin-top: 0px;"><img  style="width: 32px; height: 32px; padding-top: 5px; padding-left: 5px; padding-right: 0px; margin-right: 5px;" class="pull-left" style="width: 32px; height: 32px;" alt="http://xplorers-appsbyvinay.rhcloud.com/profilepics'+loggedin+'.gif" src="http://xplorers-appsbyvinay.rhcloud.com/profilepics/'+loggedin+'.jpg"/><div class="media-body"><h6 class="media-heading"> </h6><p style="font-size:12px;word-wrap:break-word;padding-right: 10px;"><strong>'+loggedin_username+'</strong>&nbsp;'+ resultreceived.comments+ '<input type="button"  id="erase'+resultreceived.id_comment+'" class="btn" style="float:right;"  onClick="javascript:des('+postno+ ',' +resultreceived.id_comment+')" value="erase" /></p><p style="font-size:12px;color:#3B5998;">'+comment_date+'</p></div></li>';
+			var post_date="<?php
+    echo (date("d-m", strtotime(now)));
+?>";
+			var html='<li id="subcomment_no_'+resultreceived.id_comment+'" class="media" style=" margin-bottom: 1px;background-color:#EDEFF4;margin-left: 50px;margin-top: 0px;"><img  style="width: 32px; height: 32px; padding-top: 5px; padding-left: 5px; padding-right: 0px; margin-right: 5px;" class="pull-left" style="width: 32px; height: 32px;" alt="/profilepics'+loggedin+'.gif" src="/profilepics/'+loggedin+'.jpg"/><div class="media-body"><h6 class="media-heading"> </h6><p style="font-size:12px;word-wrap:break-word;padding-right: 10px;"><strong>'+loggedin_username+'</strong>&nbsp;'+ resultreceived.comments+ '<input type="button"  id="erase'+resultreceived.id_comment+'" class="btn" style="float:right;"  onClick="javascript:des('+postno+ ',' +resultreceived.id_comment+')" value="erase" /></p><p style="font-size:12px;color:#3B5998;">'+post_date+'</p></div></li>';
 			
 				$("#commentfieldno"+postno).prepend(html);
 				$('#commentarea'+postno).val('');
+			
 		}
 		
 		
@@ -105,9 +105,37 @@ var c ="<?php
 <script type="text/javascript"> 
         
         $(document).ready(function() { 
-           
-            $('#profilepic').ajaxForm(function(result) { 
-                alert(result); 
+            $('#profilepic').ajaxForm(
+            
+            function(result) { 
+                if(result=="ok")
+                {location.reload();}
+                else
+                {alert(result);}
+            }); 
+        }); 
+    </script> 
+<script type="text/javascript"> 
+        
+        $(document).ready(function() { 
+            $('#userpost').ajaxForm({
+				dataType:  'json',
+                success:function(result){
+				var post_member="<?php
+    echo ($_SESSION['userid']);
+?>";
+                var post_member_name="<?php
+    echo ($_SESSION['username']);
+?>";
+                var post_date="<?php
+    echo (date("d-m", strtotime(now)));
+?>";
+                var html_post='<div id="Post_no_'+result.ID+'"><div id="media'+result.ID+'"class="media"><img  class="pull-left" style="width: 50px; height: 50px;" alt="/profilepics/' +post_member+ '.gif" src="/profilepics/' +post_member+ '.jpg"/><div class="media-body"><h4 class="media-heading"> '+post_member_name+ '<input   type="button" name="thuuku" class="btn" onClick="javascript:deletepost('+result.ID+')" style="float:right" id="deletepost_'+result.ID+'" value="Delete"/></h4><p>' +result.POST+ '</p><p style="font-size:12px;color:#3B5998;">'+post_date+'</p></div></div>';
+				var html_post_comment='<div id="commentfieldno'+result.ID+'"><textarea placeholder="Comment"  id="commentarea'+result.ID+'" style="resize: none;margin-bottom: 1px; margin-left: 50px; margin-top: 0px; height: 40px; width: 572px;" name="commentss"></textarea></div><input  style="float:right" class="btn" type="button" name="insertreply"  value="Comment" onClick="insert_reply('+result.ID+');"/><br><hr></div>';
+				$("#userpost").after(html_post);
+				$('#media'+result.ID).after(html_post_comment);
+				$("#post_area").val(''); 
+			}
             }); 
         }); 
     </script> 
@@ -122,7 +150,11 @@ var c ="<?php
 		 <div class="nav-collapse"> 
 		 <ul class="nav"> 
 		 <li class="active">
-		<li><a href="http://xplorers-appsbyvinay.rhcloud.com/user.php?user=<?php echo($_SESSION['userid']);?>&name=<?php echo($_SESSION['username']);?>">Home</a></li>
+		<li><a href="http://xplorers-appsbyvinay.rhcloud.com/user.php?user=<?php
+    echo ($_SESSION['userid']);
+?>&name=<?php
+    echo ($_SESSION['username']);
+?>">Home</a></li>
 		<li><a href="logout.php">Logout</a></li>
 		
 </li>
@@ -136,23 +168,38 @@ var c ="<?php
 
 
 <div class="row-fluid">  
-
+<?php
+    $checkuser = $conn->prepare("SELECT COUNT(*) FROM members WHERE memid=? AND member_name=?");
+    $checkuser->bind_param("is", $userid, $checkname);
+    $checkuser->execute();
+    $checkuser->bind_result($user);
+    $checkuser->store_result();
+    while ($checkuser->fetch()) {
+        if ($user == 0) {
+?>
+<div id="span9" class="span9 offset6">
+<div class="thumbnail" style="width: 340px; height: 140px; margin-top: 60px;">
+	<h4>The page you requested was not found.</h4>
+<p>You may have clicked an expired link or mistyped the address. Some web addresses are case sensitive.</p>
+</div>
+</div>
+<?php
+        } else {
+?>
 <div class="span3">  
-          
-   
+
 <div class="well sidebar-nav" style="background-color: rgb(255, 255, 255); border-width: 5px 0px 0px; margin-top: 0px; padding: 0px; margin-bottom: 0px;">
 
 <div class="thumbnail" style="width: 130px; height: 140px; margin-top: 60px;">
 	
-<img  src="http://xplorers-appsbyvinay.rhcloud.com/profilepics/
-<?php
-echo ($userid);
+<img  src="/profilepics/<?php
+            echo ($userid);
 ?>
 .jpg" /> 
 </div>
 
 <?php
-    if (($_GET['user']) == ($_SESSION['userid'])) {
+            if (($_GET['user']) == ($_SESSION['userid'])) {
 ?>
 		
 
@@ -180,38 +227,39 @@ echo ($userid);
 </form>
 
         <?php
-    }
+            }
 ?>
 <p style="padding-left: 10px; word-wrap: break-word; width: 125px;"><?php
-    echo ($checkname);
+            echo ($checkname);
 ?></p>
     
 <h2 >Friends</h2>
 <div class="thumbnail" style="max-width: 150px; overflow: auto; height: 300px; border-top-width: 0px; border-bottom-width: 0px;padding: 0px;">
 <ul class="nav nav-tabs nav-stacked" style="margin-bottom: 0px;">
 <?php
-    require('include/dbconnect.php');
-    $display_friends = $conn->prepare("SELECT memid,member_name FROM members ORDER BY memid ASC");
-    $display_friends->execute();
-    $display_friends->bind_result($friends_id, $friends_name);
-    $display_friends->store_result();
-    while ($display_friends->fetch()) {
+            $current_user_id = $_SESSION['userid'];
+            $display_friends = $conn->prepare("SELECT memid,member_name FROM members WHERE memid <> $current_user_id ORDER BY memid ASC");
+            $display_friends->execute();
+            $display_friends->bind_result($friends_id, $friends_name);
+            $display_friends->store_result();
+            while ($display_friends->fetch()) {
 ?>
 
 <li>
-<a   href="http://xplorers-appsbyvinay.rhcloud.com/user.php?user=<?php echo($friends_id);?>&name=<?php
-        echo ($friends_name);
+<a   href="http://xplorers-appsbyvinay.rhcloud.com/user.php?user=<?php
+                echo ($friends_id);
+?>&name=<?php
+                echo ($friends_name);
 ?>">
 <?php
-echo($friends_name);
+                echo ($friends_name);
 ?>
         </a>
         </li>
         
         <?php
-    }
-    $conn->close();
-}
+            }
+            $conn->close();
 ?>
 </ul>
 </div>
@@ -223,22 +271,27 @@ echo($friends_name);
 	
 <div class="thumbnail" style="margin-top: 0px; border-top-width: 0px; border-left-width: 1px; margin-left: -20px; padding-top: 80px; border-right-width: 0px; padding-left: 80px;">
 
-<form class="well" method="post" action="insertcomments.php" style="width: 350px;">
-<label><textarea style="resize:none" name="textinpu" placeholder="Type something"></textarea></label>
+<form class="well" id="userpost" method="post" action="insertcomments.php" style="width: 350px;">
+<label><textarea style="resize:none" id="post_area" name="textinpu" placeholder="Type something"></textarea></label>
 <input type="submit" class="btn btn-primary "  name="submit" value="post"/> 
 <input type="hidden" value="<?php
-echo ($userid);
+            echo ($userid);
 ?>" name="id"/>  
 </form>
 <?php
-require('displaycomments.php');
+            require('displaycomments.php');
 ?>
 </div>
 
 </div>
-
+<?php
+        }
+    }
+}
+?>
 </div>
 </div>
 </body>
 </html>
+
 
