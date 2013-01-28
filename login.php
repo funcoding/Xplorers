@@ -14,26 +14,25 @@ function login_success()
 {
     require("include/dbconnect.php");
     if ($mysqli->connect_errno) {
-    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-}
-    $user_email_id     = trim($_POST["login_id"]);
-    $user_password     = trim($_POST["login_password"]);
-    $loginquery = $conn->prepare("SELECT `memid`,activation_status,member_name FROM `members` WHERE `email_address`=? AND member_password=?");
-    $loginquery->bind_param("ss",$user_email_id,crypt($user_password,$salt));
+        echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+    }
+    $user_email_id = trim($_POST["login_id"]);
+    $user_password = trim($_POST["login_password"]);
+    $loginquery    = $conn->prepare("SELECT `memid`,activation_status,member_name FROM `members` WHERE `email_address`=? AND member_password=?");
+    $loginquery->bind_param("ss", $user_email_id, crypt($user_password, $salt));
     $loginquery->execute();
-    $loginquery->bind_result($member,$activation,$user_name);
+    $loginquery->bind_result($member, $activation, $user_name);
     $loginquery->store_result();
     if ($loginquery->num_rows == 1) {
         while ($loginquery->fetch()) {
-			if($activation==1)
-            {$_SESSION['username'] = $user_name;
-            $_SESSION['userid']=$member;
-            header("location:user.php?user=$member&name=$user_name");
-            $loginquery->free_result();}
-            else
-            {
-				login_fail(true);
-				}
+            if ($activation == 1) {
+                $_SESSION['username'] = $user_name;
+                $_SESSION['userid']   = $member;
+                header("location:user.php?user=$member&name=$user_name");
+                $loginquery->free_result();
+            } else {
+                login_fail(true);
+            }
         }
     } else {
         login_fail(false);
@@ -84,10 +83,17 @@ $(element).parents('.control-group').removeClass('error');
  
     <body>
 		 
-<div class="alert alert-error" >  
-                    <p style="padding-left: 200px; font-size:25px;">XPLORERS</p>
-                    </div>
- <div class="span3 offset10" style="margin-top: 50px;">
+<div class="navbar navbar-fixed-top" >
+	 <div class="navbar-inner"> 
+	<div class="container"  style="margin-left: 30px;width:1090px;">
+		<a class="brand" href="#"><h4>Xplorers</h4></a>
+		<a class="btn btn-success pull-right" style="margin-top:15px;"  href="registration.php" id="reg">New User! Signup</a>
+		 <div class="nav-collapse">  
+                 </div>
+</div>
+</div>
+</div>
+ <div class="span3 offset10" style="margin-top: 150px;">
 <div class="alert alert-info" style="width: 250px;"> 
      <form id="login" action="/login.php" method="POST" novalidate="novalidate" style="border-top-width: 0px; margin-top: 30px;">
 		  <p style="font-size:20px;"><strong>Sign in</strong></p>
@@ -103,27 +109,24 @@ $(element).parents('.control-group').removeClass('error');
 </div>
   <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
 <input type="hidden" value="<?php
-echo ($token);
+    echo ($token);
 ?>" name="token"/>
-</form> 
+</form>
+<p><a href="forgotpassword.php" id="reg">Reset Password</a></p>
 <div class="alert alert-error">  
 <?php
-if($activation===true)
-{
-	?>
+    if ($activation === true) {
+?>
 
 <p><strong>The Account has not been activated yet.</strong></p>
 <?php
-}
-elseif($activation===false)
-{
-	?>
+    } elseif ($activation === false) {
+?>
 <p><strong>Error!</strong>Wrong username or password. Try again</p>
 <?php
-}
+    }
 ?>
 </div>    	
- <a href="registration.php" id="reg">New User! Signup</a>
 </div>
 </div>
 </body>
