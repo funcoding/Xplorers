@@ -1,8 +1,8 @@
 <?php
 session_start();
 $check_id = $_POST['id'];
-$name_id      = $_SESSION['userid'];
-$text      = $_POST['textinpu'];
+$name_id  = $_SESSION['userid'];
+$text     = $_POST['textinpu'];
 if (!isset($_SESSION['userid'])) {
     header("url=http://xplorers-appsbyvinay.rhcloud.com");
 } else {
@@ -23,12 +23,24 @@ if (!isset($_SESSION['userid'])) {
                 }
                 $action->bind_param("ss", $text, $name_id);
                 $action->execute();
+                $result = $conn->prepare("SELECT `member_posts`,`post_id` FROM `$commenttable` WHERE `unix_time`=$time_of_post");
+                if (!$result) {
+                    echo ($conn->error);
+                }
+                $result->execute();
+                $result->bind_result($post, $id_post);
+                while ($result->fetch()) {
+                    echo (json_encode(array(
+                        "POST" => $post,
+                        "ID" => $id_post
+                    )));
+                }
             }
-            $conn->close();
-            $cmmname->free_result();
-            $action->free_result();
         }
+        $conn->close();
+        $cmmname->free_result();
+        $action->free_result();
+        $result->free_result();
     }
-    header("Location: {$_SERVER['HTTP_REFERER']}");
 }
 ?>
