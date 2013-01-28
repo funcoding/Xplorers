@@ -1,3 +1,7 @@
+<?php
+$email_id  = $_GET['email'];
+$check_key = $_GET['token'];
+?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -13,17 +17,12 @@
 $(document).ready(function() {
 $("#form1").validate({
 rules: {
-user: {required:true,
-rangelength: [4, 15]},
-user_email:{required:true,
-email:true,
-},
+
 password: {required:true,
 rangelength: [6, 10]},
 retype_password: {equalTo: "#password"}
 },
 messages:{
-	namealpha:{required:"Login Name is required"},
 	passalpha1:{required:"Password is required"}
 },
 errorClass: "help-inline",
@@ -58,73 +57,55 @@ $(element).parents('.control-group').removeClass('error');
 	  <div class="row">
   <div class="span6 offset4">
 <fieldset>
-<form class="well" id="form1" action="registration.php" method="post"  style="width: 580px;">
-<legend>New User</legend>
+<form class="well" id="form1" action="passwordreset.php?email=<?php
+echo ($email_id);
+?>&token=<?php
+echo ($check_key);
+?>" method="post"  style="width: 580px;">
+<legend>New Password</legend>
 
-<p>Enter Desired Login Name <div class="control-group">	 <input type="text" name="user" id="user"></input></p></div>
-<p>E-mail <div class="control-group">	 <input type="text" name="user_email" id="user_email"></input></p></div>
-<p>Enter Password  <div class="control-group">	<input type="password" name="password" id="password" /></p> </div>
-<p>Retype Password <div class="control-group">	<input type="password" name="retype_password" id="retype_password" /></p> </div>
-<input type="submit" value="Register" name="register" class="btn btn-primary "/>
-
+<p>Enter New Password  <div class="control-group">	<input type="password" name="password" id="password" /></p> </div>
+<p>Retype New Password <div class="control-group">	<input type="password" name="retype_password" id="retype_password" /></p> </div>
+<input type="submit" value="submit" name="submit" class="btn btn-primary "/>
 <?php
-error_reporting(E_ALL);
-require('include/dbconnect.php');
-
-if (isset($_POST['register'])) {
-    if (isset($_POST['user']) && isset($_POST['password']) && ($_POST['password'] == $_POST['retype_password']) && isset($_POST['retype_password']) && ctype_alnum($_POST['user']) && !preg_match('/ /', $_POST['user'])) {
-        $member_name = (trim($_POST['user']));
-        $member_email=(trim($_POST['user_email']));
-        $password  = (trim($_POST['password']));
-        $count1  = strlen($member_name);
-        $count2  = strlen($password);
-        if ((4 <= $count1 && $count1 <= 15 && 6 <= $count2 && $count2 <= 10)) {
-			 
-            $check_member = $conn->prepare("SELECT memid FROM members WHERE email_address=?");
-            $check_member->bind_param("s", $member_email);
-            $check_member->execute();
-            $check_member->bind_result($member_status); 
-            if ($check_member->fetch() != 0) {
+if (!isset($email_id) || !isset($check_key)) {
+    echo ("Error");
+} else {
+    if (isset($_POST['submit'])) {
+        require("include/dbconnect.php");
+        $newpassword   = $_POST['password'];
+        $activate_user = $conn->prepare("SELECT COUNT(*),`memid` FROM members WHERE email_address=? AND activation_key=?");
+        $activate_user->bind_param("ss", $email_id, $check_key);
+        $activate_user->execute();
+        $activate_user->bind_result($count_member, $member_id);
+        $activate_user->store_result();
+        while ($activate_user->fetch()) {
+            if ($count_member != 0) {
+                $update_password = $conn->prepare("UPDATE members SET member_password=? WHERE `memid`=$member_id");
+                if (!$update_password) {
+                    echo ($conn->error);
+                }
+                $update_password->bind_param("s", crypt($newpassword, $salt));
+                $update_password->execute();
+                if (!$update_password) {
+                    echo ($conn->error);
+                }
 ?>
-<div class="alert alert-error"> 
+<div class="alert alert-success">
+<p>New password Successfully Set</p>
+</div>
 <?php
-                die('Sorry, the username already exists');
-?>
-	</div>
-	<?php
+                $activate_user->free_result();
+                header('Refresh:1; URL=http://xplorers-appsbyvinay.rhcloud.com');
             } else {
-				$activation_key=mt_rand().mt_rand().mt_rand();
-				$table_name=uniqid();
-				$activation_status=0;
-                $qsql    = $conn->prepare("INSERT INTO members (member_name,member_password,email_address,activation_key,activation_status,$member_table) VALUES (?,?,?,?,?,?)");
-                $qsql->bind_param("ssssis", $member_name, crypt($password,$salt), $member_email,$activation_key,$activation_status,$table_name);
-                $qsql->execute();
-                if(!$qsql)
-                {echo($conn->error);}
-                $pic_name=$conn->insert_id;
-                
-                copy("blank.jpg", "profilepics/$pic_name.jpg");
-                $conn->query("CREATE TABLE xplorers.$table_name (
-								post_id int not null auto_increment,
-								unix_time int not null,
-								member_posted int not null ,
-								member_posts varchar(500) not null,
-								primary key (post_id),
-								foreign key (member_posted) references members(memid)
-								)engine=innodb");
-				
-	            
-                $conn->close();
-                $subject="Registration on Xplorers";
-                $header="From: appsbyvinay@rhcloud.com";
-                $message="Hi ".$member_name.",\nThank you for registering on xplorers site. Please click on the below link to activate your account\nhttp://xplorers-appsbyvinay.rhcloud.com/confirmaccount.php?email=".$member_email."&activationkey=".$activation_key;
-                mail($member_email,$subject,$message,$header);
-                header("Location: http://xplorers-appsbyvinay.rhcloud.com/");
+?>
+<div class="alert alert-error">
+<p> Error. </p>
+</div>
+<?php
             }
-        } else
-            echo ("error in filling form..");
-    } else
-        echo ("Error!");
+        }
+    }
 }
 ?>
 </fieldset>
