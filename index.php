@@ -1,5 +1,10 @@
 <?php
 session_start();
+if(isset($_SESSION['userid']))
+{$redirect_userid=$_SESSION['userid'];
+$redirect_username=$_SESSION['username'];
+	header("Location:http://xplorers-appsbyvinay.rhcloud.com/user.php?user=$redirect_userid&name=$redirect_username"); }
+
 $token             = md5(uniqid(mt_rand(), TRUE));
 $_SESSION['token'] = $token;
 ?>
@@ -43,10 +48,17 @@ $(element).parents('.control-group').removeClass('error');
  
     <body>
 		 
-<div class="alert alert-error" >  
-                    <p style="padding-left: 200px; font-size:25px;">XPLORERS</p>
-                    </div>
- <div class="span3 offset10" style="margin-top: 50px;">
+<div class="navbar navbar-fixed-top" >
+	 <div class="navbar-inner"> 
+	<div class="container"  style="margin-left: 30px;width:1090px;">
+		<a class="brand" href="#"><h4>Xplorers</h4></a>
+		<a class="btn btn-success pull-right" style="margin-top:15px;"  href="registration.php" id="reg">New User! Signup</a>
+		 <div class="nav-collapse">  
+                 </div>
+</div>
+</div>
+</div>
+ <div class="span3 offset10" style="margin-top: 150px;">
 <div class="alert alert-info" style="width: 250px;"> 
      <form id="login" action="/login.php" method="POST" novalidate="novalidate" style="border-top-width: 0px; margin-top: 30px;">
 		  <p style="font-size:20px;"><strong>Sign in</strong></p>
@@ -60,14 +72,16 @@ $(element).parents('.control-group').removeClass('error');
 <input type="password" name="login_password" id="login_password" placeholder="Password"/></label>
   <br>
 </div>
-  <button type="submit" class="btn btn-primary " name="submit">Xplore</button>  
+  <button type="submit" class="btn btn-primary" name="submit">Xplore</button>  
 <input type="hidden" value="
 <?php
 echo ($token);
 ?>
 " name="token"/>
 </form>  	
- <a href="registration.php" id="reg">New User! Signup</a>
+ 
+<p><a href="forgotpassword.php" id="reg">Reset Password</a></p>
+ 
 </div>
 </div>
 </body>
