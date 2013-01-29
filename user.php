@@ -4,7 +4,7 @@ $checkname = $_GET['name'];
 $userid    = $_GET['user'];
 require('include/dbconnect.php');
 if (!isset($_SESSION['userid'])) {
-    header("url=http://xplorers-appsbyvinay.rhcloud.com");
+    header("Location:http://xplorers-appsbyvinay.rhcloud.com");
 } else {
 ?>
 
