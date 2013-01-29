@@ -31,7 +31,7 @@ if (!isset($_SESSION['userid'])) {
                 $result->bind_result($post, $id_post);
                 while ($result->fetch()) {
                     echo (json_encode(array(
-                        "POST" => $post,
+                        "POST" => htmlentities($post,ENT_QUOTES),
                         "ID" => $id_post
                     )));
                 }
