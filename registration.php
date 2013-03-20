@@ -1,7 +1,4 @@
-<?php
-$email_id  = $_GET['email'];
-$check_key = $_GET['token'];
-?>
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -11,19 +8,25 @@ $check_key = $_GET['token'];
     <meta name="created" content="">
     <meta name="description" content="">
     <meta name="keywords" content="">
-   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-<script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+   <script type="text/javascript" src="include/js/jquery-latest.js"></script>
+     <script type="text/javascript" src="include/js/jquery.validate.js"></script>
+<link href="include/css/bootstrap.min.css" rel="stylesheet" >
 <script type="text/javascript">
 $(document).ready(function() {
 $("#form1").validate({
 rules: {
-
+email: {required:true,
+email:true
+},
+username: {required:true,
+rangelength: [5, 20]
+},
 password: {required:true,
 rangelength: [6, 10]},
 retype_password: {equalTo: "#password"}
 },
 messages:{
-	passalpha1:{required:"Password is required"}
+	username:{required:"Username is required"}
 },
 errorClass: "help-inline",
 errorElement: "span",
@@ -41,7 +44,7 @@ $(element).parents('.control-group').removeClass('error');
 });
 </script>
     <title></title>
-    <link href="include/css/bootstrap.css" rel="stylesheet"> 
+    
     <!--[if IE]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -57,56 +60,57 @@ $(element).parents('.control-group').removeClass('error');
 	  <div class="row">
   <div class="span6 offset4">
 <fieldset>
-<form class="well" id="form1" action="passwordreset.php?email=<?php
-echo ($email_id);
-?>&token=<?php
-echo ($check_key);
-?>" method="post"  style="width: 580px;">
-<legend>New Password</legend>
-
+<form class="well" id="form1" action="" method="post"  style="width: 580px;">
+<legend>New User</legend>
+<p>Enter E-mail address <div class="control-group">	<input type="text" name="email" id="email" /></p> </div>
+<p>Enter Desired User Name <div class="control-group">	<input type="text" name="username" id="username" /></p> </div>
 <p>Enter New Password  <div class="control-group">	<input type="password" name="password" id="password" /></p> </div>
 <p>Retype New Password <div class="control-group">	<input type="password" name="retype_password" id="retype_password" /></p> </div>
 <input type="submit" value="submit" name="submit" class="btn btn-primary "/>
 <?php
-if (!isset($email_id) || !isset($check_key)) {
-    echo ("Error");
-} else {
+
     if (isset($_POST['submit'])) {
         require("include/dbconnect.php");
-        $newpassword   = $_POST['password'];
-        $activate_user = $conn->prepare("SELECT COUNT(*),`memid` FROM members WHERE email_address=? AND activation_key=?");
-        $activate_user->bind_param("ss", $email_id, $check_key);
-        $activate_user->execute();
-        $activate_user->bind_result($count_member, $member_id);
-        $activate_user->store_result();
-        while ($activate_user->fetch()) {
+        $user_password   = $_POST['password'];
+        $user_name = $_POST['username'];
+        $user_email = $_POST['email'];
+        $check_user = $conn->prepare("SELECT COUNT(*) FROM members WHERE email_address=? ");
+        $check_user->bind_param("s", $user_email);
+        $check_user->execute();
+        $check_user->bind_result($count_member);
+        $check_user->store_result();
+        while ($check_user->fetch()) {
             if ($count_member != 0) {
-                $update_password = $conn->prepare("UPDATE members SET member_password=? WHERE `memid`=$member_id");
-                if (!$update_password) {
-                    echo ($conn->error);
-                }
-                $update_password->bind_param("s", crypt($newpassword, $salt));
-                $update_password->execute();
-                if (!$update_password) {
-                    echo ($conn->error);
-                }
-?>
-<div class="alert alert-success">
-<p>New password Successfully Set</p>
+				?>
+				
+				<div class="alert alert-error">
+<p> User already Exists </p>
 </div>
-<?php
-                $activate_user->free_result();
-                header('Refresh:1; URL=http://xplorers-appsbyvinay.rhcloud.com');
+<?php 		
             } else {
-?>
-<div class="alert alert-error">
-<p> Error. </p>
-</div>
-<?php
+				$activation_key=mt_rand().mt_rand().mt_rand();
+				$crypted_password=crypt($user_password,$salt);
+				$table_name=uniqid();
+				$activation_status=0;
+				$new_user=$conn->prepare("INSERT INTO members (activation_key,activation_status,member_name,member_password,email_address,member_table) VALUES (?,?,?,?,?,?)");
+				$new_user->bind_param("sissss",$activation_key,$activation_status,$user_name,$crypted_password,$user_email,$table_name);
+				$new_user->execute();
+				if($new_user)
+				{	$conn->query("CREATE TABLE IF NOT EXISTS $table_name (post_id int(11) NOT NULL AUTO_INCREMENT, unix_time int(11) NOT NULL, member_posted int(11) NOT NULL, member_posts varchar(500) NOT NULL, PRIMARY KEY(post_id)) ");
+					$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+					$headers .='From:no-reply@xplorers.com'."\r\n";
+					$body="Hello ".$user_name.",<br><br>Thank you for registering in Xplorers. Please click on the below link to activate your account.<br><br>
+					<a href='http://xplorers-appsbyvinay.rhcloud.com/confirmaccount.php?email=".$user_email."&activationkey=".$activation_key."'>Click here to activate your account</a>";
+					mail($user_email,"Registration in Xplorers",$body,$headers);
+					?>
+					<div class="alert alert-success">
+					<p> An email has been sent to your account with instructions to activate your account. Please check your inbox. </p>
+					</div>
+<?
+				}
             }
         }
     }
-}
 ?>
 </fieldset>
 </div>
